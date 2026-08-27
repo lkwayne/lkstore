@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  /* Couleurs de marque — extraites directement du logo BENDO */
+  --brand-navy: #001c4a;
+  --brand-navy-light: #0a2a5e;
+  --brand-orange: #fd8701;
+  --brand-red: #fb1c32;
+  --brand-surface: #f7f8fa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-light: var(--brand-navy-light);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-red: var(--brand-red);
+  --color-brand-surface: var(--brand-surface);
+
+  --font-sans: "Inter var", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter var", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Dégradé signature BENDO : orange -> rouge/rose, repris du logo */
+.bg-brand-gradient {
+  background-image: linear-gradient(
+    155deg,
+    var(--brand-orange) 0%,
+    #fe4018 55%,
+    var(--brand-red) 100%
+  );
+}
+
+.text-brand-gradient {
+  background-image: linear-gradient(
+    155deg,
+    var(--brand-orange) 0%,
+    var(--brand-red) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
