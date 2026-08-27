@@ -74,6 +74,12 @@ par table.
    # ou coller le contenu de supabase/migrations/0001_init.sql
    # dans l'éditeur SQL du dashboard Supabase
    ```
+3bis. (Optionnel, pour tester le catalogue) Peupler avec des données de
+   démonstration fictives :
+   ```bash
+   # Coller le contenu de supabase/seed/seed.sql dans l'éditeur SQL
+   # du dashboard Supabase, après la migration.
+   ```
 4. Régénérer les types TypeScript réels :
    ```bash
    npx supabase gen types typescript --project-id <PROJECT_ID> > src/types/database.ts
@@ -95,13 +101,25 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
-- Paiement : uniquement `CASH_ON_DELIVERY` et `PAY_IN_STORE` sont prévus pour
-  la v1 (aucune intégration Orange Money / MTN MoMo / carte — architecture
-  prête à les accueillir plus tard, rien de simulé).
-- Pages catalogue, panier, checkout, dashboard admin, notifications
-  WhatsApp/email : à construire lot par lot sur cette base.
+- Panier persistant, checkout, calcul de livraison par zone.
+- Dashboard admin (produits, stocks, fournisseurs, commandes).
+- Filtres catalogue avancés (marque, fourchette de prix) — seuls le tri et
+  la pagination sont branchés pour l'instant.
+- Notifications WhatsApp/email.
 - Tests E2E Playwright.
-- Seed de démonstration.
+
+## Module Catalogue (livré)
+
+- `/categories` — liste des catégories publiées
+- `/categories/[slug]` — produits d'une catégorie, tri + pagination réels
+- `/products/[slug]` — fiche produit (jamais de coût/marge/fournisseur exposés)
+- `/search?q=` — recherche par nom ou SKU
+
+Tout est branché sur `src/services/catalog.service.ts`, qui interroge
+Supabase directement — rien n'est hardcodé. Sans projet Supabase connecté
+(ou base non peuplée), ces pages affichent un état vide honnête plutôt que
+des données inventées. Utilise `supabase/seed/seed.sql` pour peupler une
+base de test avec des données fictives une fois la migration appliquée.
 
 ## Règle de non-simulation
 
