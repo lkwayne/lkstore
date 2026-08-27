@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { StockBadge } from "@/components/StockBadge";
+import { AddToCartButton } from "@/components/AddToCartButton";
 import { formatPrice } from "@/lib/format-price";
 import { getProductBySlug } from "@/services/catalog.service";
 
@@ -34,7 +35,6 @@ export default async function ProductDetailPage({
 
   const hasDiscount =
     product.compareAtPrice != null && product.compareAtPrice > product.price;
-  const isAvailable = product.stockQuantity > 0;
 
   return (
     <>
@@ -129,17 +129,10 @@ export default async function ProductDetailPage({
                 </div>
               </dl>
 
-              <button
-                type="button"
-                disabled={!isAvailable}
-                title="Le module Panier arrive dans le prochain lot"
-                className="bg-brand-gradient mt-8 w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {isAvailable ? "Ajouter au panier" : "Indisponible"}
-              </button>
-              <p className="mt-2 text-center text-xs text-neutral-400">
-                Le panier persistant arrive dans le prochain module.
-              </p>
+              <AddToCartButton
+                productId={product.id}
+                stockQuantity={product.stockQuantity}
+              />
             </div>
           </div>
         </div>

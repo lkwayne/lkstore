@@ -101,10 +101,12 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
-- Panier persistant, checkout, calcul de livraison par zone.
+- Checkout (adresse, mode de réception, calcul de livraison par zone).
 - Dashboard admin (produits, stocks, fournisseurs, commandes).
 - Filtres catalogue avancés (marque, fourchette de prix) — seuls le tri et
   la pagination sont branchés pour l'instant.
+- Authentification — le panier est donc pour l'instant persistant par
+  navigateur (localStorage), pas encore synchronisé sur un compte client.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
 
@@ -120,6 +122,24 @@ Supabase directement — rien n'est hardcodé. Sans projet Supabase connecté
 (ou base non peuplée), ces pages affichent un état vide honnête plutôt que
 des données inventées. Utilise `supabase/seed/seed.sql` pour peupler une
 base de test avec des données fictives une fois la migration appliquée.
+
+## Module Panier (livré)
+
+- Persistant par navigateur (`localStorage`), lu/écrit via `CartProvider`
+  (`src/components/CartProvider.tsx`), avec badge de quantité dans le header.
+- **Aucun prix n'est jamais stocké côté client** : le panier ne garde que
+  `productId` + `quantity`. À l'affichage, `fetchCartProductData` (Server
+  Action) relit le prix et le stock réels depuis Supabase.
+- Un article devenu indisponible ou dont le stock a baissé est signalé et
+  la quantité est ajustée automatiquement ; le bouton de commande reste
+  désactivé tant que le panier contient un article non disponible.
+- Le checkout (adresse, livraison, paiement) n'est pas encore branché — le
+  bouton "Passer la commande" le dit explicitement plutôt que de simuler
+  une commande.
+- Limite connue : sans authentification, le panier ne survit pas à un
+  changement de navigateur/appareil. La synchronisation vers une table
+  Supabase `carts` pour les clients connectés est prévue avec le module
+  Authentification.
 
 ## Règle de non-simulation
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { MAIN_NAV } from "@/config/brand";
+import { useCart } from "@/components/CartProvider";
 
 function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -82,6 +83,7 @@ function SearchForm({ id, className }: { id: string; className?: string }) {
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 backdrop-blur">
@@ -101,7 +103,7 @@ export function Header() {
             src="/brand/bendo-logo-header.png"
             alt="BENDO"
             width={140}
-            height={91}
+            height={107}
             priority
             className="h-9 w-auto sm:h-10"
           />
@@ -126,10 +128,15 @@ export function Header() {
           </Link>
           <Link
             href="/cart"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy hover:bg-brand-surface"
-            aria-label="Mon panier"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy hover:bg-brand-surface"
+            aria-label={`Mon panier${itemCount > 0 ? ` (${itemCount} article${itemCount > 1 ? "s" : ""})` : ""}`}
           >
             <CartIcon className="h-5 w-5" />
+            {itemCount > 0 ? (
+              <span className="bg-brand-gradient absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            ) : null}
           </Link>
         </div>
       </div>
@@ -156,7 +163,7 @@ export function Header() {
       {mobileMenuOpen ? (
         <div className="fixed inset-0 z-50 bg-white md:hidden">
           <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
-            <Image src="/brand/bendo-logo-header.png" alt="BENDO" width={120} height={78} className="h-8 w-auto" />
+            <Image src="/brand/bendo-logo-header.png" alt="BENDO" width={120} height={92} className="h-8 w-auto" />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}

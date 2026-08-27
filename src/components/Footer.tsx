@@ -10,7 +10,7 @@ export function Footer() {
           src="/brand/bendo-logo-header.png"
           alt="BENDO"
           width={120}
-          height={78}
+          height={92}
           className="h-8 w-auto"
         />
         <p className="mt-3 max-w-sm text-sm text-neutral-500">

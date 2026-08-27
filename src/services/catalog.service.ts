@@ -219,3 +219,26 @@ export async function searchProducts(params: {
     totalPages: Math.max(1, Math.ceil(totalCount / pageSize)),
   };
 }
+
+/**
+ * Relit l'état actuel (prix, stock) d'une liste de produits depuis la base —
+ * utilisé par le panier, qui ne fait jamais confiance à un prix envoyé par
+ * le navigateur. Les produits dépubliés ou supprimés sont silencieusement
+ * absents du résultat ; c'est à l'appelant de le signaler à l'utilisateur.
+ */
+export async function getProductsByIds(ids: string[]): Promise<ProductSummary[]> {
+  if (ids.length === 0) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select(PRODUCT_SUMMARY_SELECT)
+    .eq("status", "PUBLISHED")
+    .in("id", ids);
+
+  if (error) {
+    throw new Error(`Impossible de recharger le panier : ${error.message}`);
+  }
+
+  return (data ?? []).map((row) => mapProductSummary(row as unknown as Record<string, unknown>));
+}
