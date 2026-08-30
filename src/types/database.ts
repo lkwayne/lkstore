@@ -137,6 +137,40 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
       };
+      shipping_zones: {
+        Row: {
+          id: string;
+          city: string;
+          neighborhood: string | null;
+          fee: number;
+          estimated_days: number;
+          cod_allowed: boolean;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["shipping_zones"]["Row"]> & {
+          city: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["shipping_zones"]["Row"]>;
+      };
+      stores: {
+        Row: {
+          id: string;
+          name: string;
+          address: string;
+          city: string;
+          phone: string | null;
+          opening_hours: Json | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["stores"]["Row"]> & {
+          name: string;
+          address: string;
+          city: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["stores"]["Row"]>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

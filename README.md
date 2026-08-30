@@ -101,12 +101,11 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
-- Checkout (adresse, mode de réception, calcul de livraison par zone).
 - Dashboard admin (produits, stocks, fournisseurs, commandes).
 - Filtres catalogue avancés (marque, fourchette de prix) — seuls le tri et
   la pagination sont branchés pour l'instant.
-- Authentification — le panier est donc pour l'instant persistant par
-  navigateur (localStorage), pas encore synchronisé sur un compte client.
+- Authentification — le panier et les commandes sont pour l'instant en mode
+  invité (pas de compte client, pas d'historique de commandes consultable).
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
 
@@ -133,13 +132,37 @@ base de test avec des données fictives une fois la migration appliquée.
 - Un article devenu indisponible ou dont le stock a baissé est signalé et
   la quantité est ajustée automatiquement ; le bouton de commande reste
   désactivé tant que le panier contient un article non disponible.
-- Le checkout (adresse, livraison, paiement) n'est pas encore branché — le
-  bouton "Passer la commande" le dit explicitement plutôt que de simuler
-  une commande.
 - Limite connue : sans authentification, le panier ne survit pas à un
   changement de navigateur/appareil. La synchronisation vers une table
   Supabase `carts` pour les clients connectés est prévue avec le module
   Authentification.
+
+## Module Checkout (livré)
+
+- `/checkout` — formulaire complet : coordonnées, choix livraison/retrait
+  magasin, zone de livraison ou magasin réels (jamais codés en dur), paiement
+  associé automatiquement (COD pour livraison, paiement en magasin pour
+  retrait).
+- Toute la création de commande passe par une fonction SQL unique et
+  transactionnelle, `create_order()` (`supabase/migrations/0002_checkout.sql`) :
+  - revérifie chaque produit, son statut, son stock (avec verrouillage de
+    ligne `FOR UPDATE` pour éviter une survente en cas de commandes
+    concurrentes) ;
+  - recalcule le prix, le sous-total et le tarif de livraison **côté
+    serveur** — aucun prix envoyé par le navigateur n'est utilisé ;
+  - vérifie que COD / retrait magasin sont bien autorisés pour chaque
+    article et pour la zone choisie ;
+  - crée la commande, les lignes, décrémente le stock et crée les
+    `fulfillment_orders` pour les articles en dropshipping — tout ou rien
+    (une commande ne peut pas être créée avec un stock décrémenté à moitié) ;
+  - génère le numéro `BEN-2026-000001` de façon atomique (compteur par
+    année, sûr sous concurrence) ;
+  - journalise la création dans `audit_logs`.
+- Choix de sécurité assumé : par souci de ne pas permettre l'énumération des
+  commandes, il n'existe pour l'instant aucune route qui relit une commande
+  après coup — la confirmation (numéro, total) s'affiche directement depuis
+  la réponse de `create_order()` au moment du paiement. Le suivi de commande
+  par numéro (`/track-order`) arrivera avec le module Authentification.
 
 ## Règle de non-simulation
 

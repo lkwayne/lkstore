@@ -145,23 +145,27 @@ export default function CartPage() {
                   votre zone.
                 </p>
 
-                <button
-                  type="button"
-                  disabled={!canCheckout}
-                  title="Le module Checkout arrive dans le prochain lot"
-                  className="bg-brand-gradient mt-5 w-full rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  Passer la commande
-                </button>
+                {canCheckout ? (
+                  <Link
+                    href="/checkout"
+                    className="bg-brand-gradient mt-5 flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-red/20"
+                  >
+                    Passer la commande
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="bg-brand-gradient mt-5 w-full rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Passer la commande
+                  </button>
+                )}
                 {!canCheckout && validLines.length > 0 ? (
                   <p className="mt-2 text-center text-xs text-brand-red">
                     Retirez les articles indisponibles pour continuer.
                   </p>
-                ) : (
-                  <p className="mt-2 text-center text-xs text-neutral-400">
-                    Le checkout complet arrive dans le prochain module.
-                  </p>
-                )}
+                ) : null}
               </aside>
             </div>
           )}
