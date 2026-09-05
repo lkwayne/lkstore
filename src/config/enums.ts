@@ -1,5 +1,5 @@
 /**
- * Enums métier BENDO — source unique de vérité côté application.
+ * Enums métier SENDUU — source unique de vérité côté application.
  * Doivent rester synchronisés avec les types PostgreSQL définis dans
  * supabase/migrations/0001_init.sql.
  */
@@ -16,7 +16,7 @@ export type UserRole = (typeof USER_ROLES)[number];
 
 export const STAFF_ROLES = USER_ROLES.filter((r) => r !== "CUSTOMER");
 
-export const FULFILLMENT_TYPES = ["BENDO_STOCK", "DROPSHIPPING", "MIXED"] as const;
+export const FULFILLMENT_TYPES = ["SENDUU_STOCK", "DROPSHIPPING", "MIXED"] as const;
 export type FulfillmentType = (typeof FULFILLMENT_TYPES)[number];
 
 export const SUPPLIER_STATUSES = ["ACTIVE", "INACTIVE", "PENDING", "BLOCKED"] as const;

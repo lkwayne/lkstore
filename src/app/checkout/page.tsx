@@ -407,7 +407,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-brand-gradient w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 disabled:cursor-not-allowed disabled:opacity-60 sm:hidden"
+                  className="bg-brand-gradient w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-orange/25 disabled:cursor-not-allowed disabled:opacity-60 sm:hidden"
                 >
                   {isSubmitting ? "Envoi de la commande…" : "Confirmer la commande"}
                 </button>
@@ -457,7 +457,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-brand-gradient mt-5 hidden w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 disabled:cursor-not-allowed disabled:opacity-60 sm:block"
+                  className="bg-brand-gradient mt-5 hidden w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-orange/25 disabled:cursor-not-allowed disabled:opacity-60 sm:block"
                 >
                   {isSubmitting ? "Envoi de la commande…" : "Confirmer la commande"}
                 </button>

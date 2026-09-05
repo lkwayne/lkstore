@@ -7,8 +7,8 @@ import { getCategories } from "@/services/catalog.service";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Catégories — BENDO",
-  description: "Parcourez toutes les catégories de produits BENDO.",
+  title: "Catégories — SENDUU",
+  description: "Parcourez toutes les catégories de produits SENDUU.",
 };
 
 export default async function CategoriesPage() {

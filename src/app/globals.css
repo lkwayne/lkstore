@@ -4,11 +4,15 @@
   --background: #ffffff;
   --foreground: #0a0a0a;
 
-  /* Couleurs de marque — extraites directement du logo BENDO */
-  --brand-navy: #001c4a;
-  --brand-navy-light: #0a2a5e;
-  --brand-orange: #fd8701;
-  --brand-red: #fb1c32;
+  /* Couleurs de marque — extraites directement du logo SENDUU */
+  --brand-navy: #001c3d;
+  --brand-navy-light: #0a2a52;
+  --brand-orange: #fd7601;
+  --brand-orange-light: #fd9a2e;
+  /* Rouge fonctionnel (erreurs, alertes) — n'appartient plus à l'identité
+     de marque depuis le passage à la palette bicolore SENDUU, conservé
+     comme couleur sémantique standard. */
+  --brand-red: #e11d2a;
   --brand-surface: #f7f8fa;
 }
 
@@ -18,6 +22,7 @@
   --color-brand-navy: var(--brand-navy);
   --color-brand-navy-light: var(--brand-navy-light);
   --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-light: var(--brand-orange-light);
   --color-brand-red: var(--brand-red);
   --color-brand-surface: var(--brand-surface);
 
@@ -30,21 +35,20 @@ body {
   color: var(--foreground);
 }
 
-/* Dégradé signature BENDO : orange -> rouge/rose, repris du logo */
+/* Dégradé signature SENDUU : reprend les deux tons orange du swoosh du logo */
 .bg-brand-gradient {
   background-image: linear-gradient(
     155deg,
-    var(--brand-orange) 0%,
-    #fe4018 55%,
-    var(--brand-red) 100%
+    var(--brand-orange-light) 0%,
+    var(--brand-orange) 100%
   );
 }
 
 .text-brand-gradient {
   background-image: linear-gradient(
     155deg,
-    var(--brand-orange) 0%,
-    var(--brand-red) 100%
+    var(--brand-orange-light) 0%,
+    var(--brand-orange) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;

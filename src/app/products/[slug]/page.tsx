@@ -19,7 +19,7 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
   if (!product) return {};
   return {
-    title: product.seoTitle ?? `${product.name} — BENDO`,
+    title: product.seoTitle ?? `${product.name} — SENDUU`,
     description: product.seoDescription ?? product.description ?? undefined,
   };
 }

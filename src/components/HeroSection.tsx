@@ -2,9 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 
 const TRUST_POINTS = [
-  { label: "Paiement à la livraison", detail: "Payez en recevant votre commande" },
-  { label: "Retrait en magasin", detail: "Récupérez directement à Douala" },
-  { label: "Livraison suivie", detail: "Du panier jusqu'à votre porte" },
+  { label: "Achetez mieux", detail: "Un catalogue pensé pour votre quotidien" },
+  { label: "Payez moins", detail: "Paiement à la livraison ou en magasin" },
+  { label: "Nous livrons", detail: "Du panier jusqu'à votre porte, à Douala" },
 ];
 
 export function HeroSection() {
@@ -22,21 +22,21 @@ export function HeroSection() {
           </span>
 
           <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight text-brand-navy sm:text-5xl lg:text-6xl">
-            <span className="text-brand-gradient">Tout ce qu&rsquo;il vous faut</span>
+            <span className="text-brand-gradient">Achetez mieux, payez moins</span>
             <br />
-            livré chez vous, ou récupéré en magasin.
+            et on vous livre, où que vous soyez.
           </h1>
 
           <p className="mt-5 max-w-xl text-base text-neutral-500 sm:text-lg">
             Téléphones, informatique, électroménager, mode et bien plus —
-            BENDO rassemble ce dont vous avez besoin au quotidien, avec un
+            SENDUU rassemble ce dont vous avez besoin au quotidien, avec un
             paiement à la livraison ou en magasin, sans surprise.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/categories"
-              className="bg-brand-gradient inline-flex items-center justify-center rounded-full px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 transition-transform hover:scale-[1.02]"
+              className="bg-brand-gradient inline-flex items-center justify-center rounded-full px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-orange/25 transition-transform hover:scale-[1.02]"
             >
               Découvrir le catalogue
             </Link>
@@ -69,8 +69,8 @@ export function HeroSection() {
               className="bg-brand-gradient absolute inset-0 -z-10 scale-90 rounded-[3rem] opacity-15 blur-2xl"
             />
             <Image
-              src="/brand/bendo-icon-512.png"
-              alt="BENDO"
+              src="/brand/senduu-icon-512.png"
+              alt="SENDUU"
               width={340}
               height={340}
               priority

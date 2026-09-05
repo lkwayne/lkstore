@@ -1,6 +1,6 @@
 import type { CartLine } from "@/types/cart";
 
-const STORAGE_KEY = "bendo_cart_v1";
+const STORAGE_KEY = "senduu_cart_v1";
 
 /**
  * Persistance côté client uniquement (localStorage). Pour un client

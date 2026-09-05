@@ -9,7 +9,7 @@ export default function PromotionsPage() {
       <main className="flex-1">
         <ComingSoonSection
           title="Promotions"
-          description="Les ventes flash et réductions BENDO seront bientôt visibles ici."
+          description="Les ventes flash et réductions SENDUU seront bientôt visibles ici."
         />
       </main>
       <Footer />

@@ -28,8 +28,8 @@ export async function generateMetadata({
   const category = await getCategoryBySlug(slug);
   if (!category) return {};
   return {
-    title: `${category.name} — BENDO`,
-    description: `Découvrez tous les produits ${category.name} disponibles sur BENDO.`,
+    title: `${category.name} — SENDUU`,
+    description: `Découvrez tous les produits ${category.name} disponibles sur SENDUU.`,
   };
 }
 

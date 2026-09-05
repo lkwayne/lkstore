@@ -14,7 +14,7 @@ export const productSchema = z.object({
   costPrice: z.coerce.number().nonnegative().optional().nullable(),
   stockQuantity: z.coerce.number().int().nonnegative().default(0),
   lowStockThreshold: z.coerce.number().int().nonnegative().default(5),
-  fulfillmentType: z.enum(FULFILLMENT_TYPES).default("BENDO_STOCK"),
+  fulfillmentType: z.enum(FULFILLMENT_TYPES).default("SENDUU_STOCK"),
   codAvailable: z.boolean().default(true),
   storePickupAvailable: z.boolean().default(false),
 });

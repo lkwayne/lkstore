@@ -148,7 +148,7 @@ export default function CartPage() {
                 {canCheckout ? (
                   <Link
                     href="/checkout"
-                    className="bg-brand-gradient mt-5 flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-red/20"
+                    className="bg-brand-gradient mt-5 flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-orange/25"
                   >
                     Passer la commande
                   </Link>
@@ -156,7 +156,7 @@ export default function CartPage() {
                   <button
                     type="button"
                     disabled
-                    className="bg-brand-gradient mt-5 w-full rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="bg-brand-gradient mt-5 w-full rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-orange/25 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Passer la commande
                   </button>

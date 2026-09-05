@@ -98,12 +98,12 @@ export function Header() {
           <MenuIcon className="h-6 w-6" />
         </button>
 
-        <Link href="/" className="flex shrink-0 items-center" aria-label="BENDO — Accueil">
+        <Link href="/" className="flex shrink-0 items-center" aria-label="SENDUU — Accueil">
           <Image
-            src="/brand/bendo-logo-header.png"
-            alt="BENDO"
+            src="/brand/senduu-logo-header.png"
+            alt="SENDUU"
             width={140}
-            height={107}
+            height={94}
             priority
             className="h-9 w-auto sm:h-10"
           />
@@ -163,7 +163,7 @@ export function Header() {
       {mobileMenuOpen ? (
         <div className="fixed inset-0 z-50 bg-white md:hidden">
           <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
-            <Image src="/brand/bendo-logo-header.png" alt="BENDO" width={120} height={92} className="h-8 w-auto" />
+            <Image src="/brand/senduu-logo-header.png" alt="SENDUU" width={120} height={80} className="h-8 w-auto" />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}

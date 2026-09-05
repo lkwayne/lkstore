@@ -1,4 +1,4 @@
-# BENDO — Tout ce qu'il vous faut
+# SENDUU — Achetez mieux, payez moins, nous livrons
 
 Plateforme e-commerce généraliste pour le marché camerounais. Vendeur unique
 combinant **stock propre** et **dropshipping via fournisseurs partenaires**
@@ -155,7 +155,7 @@ base de test avec des données fictives une fois la migration appliquée.
   - crée la commande, les lignes, décrémente le stock et crée les
     `fulfillment_orders` pour les articles en dropshipping — tout ou rien
     (une commande ne peut pas être créée avec un stock décrémenté à moitié) ;
-  - génère le numéro `BEN-2026-000001` de façon atomique (compteur par
+  - génère le numéro `SEN-2026-000001` de façon atomique (compteur par
     année, sûr sous concurrence) ;
   - journalise la création dans `audit_logs`.
 - Choix de sécurité assumé : par souci de ne pas permettre l'énumération des

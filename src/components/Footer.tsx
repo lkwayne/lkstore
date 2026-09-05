@@ -7,10 +7,10 @@ export function Footer() {
     <footer className="mt-auto border-t border-neutral-100 bg-brand-surface">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <Image
-          src="/brand/bendo-logo-header.png"
-          alt="BENDO"
+          src="/brand/senduu-logo-header.png"
+          alt="SENDUU"
           width={120}
-          height={92}
+          height={80}
           className="h-8 w-auto"
         />
         <p className="mt-3 max-w-sm text-sm text-neutral-500">
@@ -31,7 +31,7 @@ export function Footer() {
         </nav>
 
         <p className="mt-8 text-xs text-neutral-400">
-          © {new Date().getFullYear()} BENDO. Tous droits réservés.
+          © {new Date().getFullYear()} SENDUU. Tous droits réservés.
         </p>
       </div>
     </footer>

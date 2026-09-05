@@ -1,15 +1,15 @@
 /**
- * Configuration de marque BENDO — source unique pour les éléments
+ * Configuration de marque SENDUU — source unique pour les éléments
  * réutilisés dans le header, le footer et les métadonnées.
  */
 
 export const BRAND = {
-  name: "BENDO",
-  tagline: "Tout ce qu'il vous faut.",
+  name: "SENDUU",
+  tagline: "Achetez mieux, payez moins, nous livrons.",
+  valueProps: ["Achetez mieux", "Payez moins", "Nous livrons"],
   colors: {
-    navy: "#001C4A",
-    orange: "#FD8701",
-    red: "#FB1C32",
+    navy: "#001C3D",
+    orange: "#FD7601",
   },
 } as const;
 

@@ -9,7 +9,7 @@ export default function TrackOrderPage() {
       <main className="flex-1">
         <ComingSoonSection
           title="Suivi de commande"
-          description="Entrez votre numéro de commande BEN-XXXX-XXXXXX pour suivre sa livraison — fonctionnalité branchée avec le module Commandes."
+          description="Entrez votre numéro de commande SEN-XXXX-XXXXXX pour suivre sa livraison — fonctionnalité branchée avec le module Commandes."
         />
       </main>
       <Footer />

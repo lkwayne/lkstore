@@ -18,7 +18,7 @@ describe("cart-storage", () => {
 
   it("ignore les lignes corrompues (quantité manquante ou négative)", () => {
     window.localStorage.setItem(
-      "bendo_cart_v1",
+      "senduu_cart_v1",
       JSON.stringify([
         { productId: "p1", quantity: 2 },
         { productId: "p2" },
@@ -30,7 +30,7 @@ describe("cart-storage", () => {
   });
 
   it("ne plante pas sur un JSON invalide", () => {
-    window.localStorage.setItem("bendo_cart_v1", "{not-json");
+    window.localStorage.setItem("senduu_cart_v1", "{not-json");
     expect(readCartFromStorage()).toEqual([]);
   });
 });

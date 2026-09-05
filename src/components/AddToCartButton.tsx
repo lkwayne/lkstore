@@ -29,7 +29,7 @@ export function AddToCartButton({
           addItem(productId, 1);
           setJustAdded(true);
         }}
-        className="bg-brand-gradient mt-8 w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-red/20 transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+        className="bg-brand-gradient mt-8 w-full rounded-full px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-orange/25 transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         {!isAvailable ? "Indisponible" : justAdded ? "Ajouté au panier ✓" : "Ajouter au panier"}
       </button>

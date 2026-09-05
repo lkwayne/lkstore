@@ -84,7 +84,7 @@ export interface Database {
           cost_price: number | null;
           stock_quantity: number;
           low_stock_threshold: number;
-          fulfillment_type: "BENDO_STOCK" | "DROPSHIPPING" | "MIXED";
+          fulfillment_type: "SENDUU_STOCK" | "DROPSHIPPING" | "MIXED";
           cod_available: boolean;
           store_pickup_available: boolean;
           status: "DRAFT" | "PUBLISHED" | "ARCHIVED";

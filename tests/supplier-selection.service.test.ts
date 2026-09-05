@@ -44,25 +44,25 @@ describe("selectPrimarySupplier", () => {
 });
 
 describe("isProductAvailableForSale", () => {
-  it("disponible si le stock BENDO est positif, même sans fournisseur", () => {
+  it("disponible si le stock SENDUU est positif, même sans fournisseur", () => {
     expect(
-      isProductAvailableForSale({ bendoStock: 3, dropshippingOptions: [] })
+      isProductAvailableForSale({ ownStock: 3, dropshippingOptions: [] })
     ).toBe(true);
   });
 
   it("disponible si un fournisseur actif a du stock", () => {
     expect(
       isProductAvailableForSale({
-        bendoStock: 0,
+        ownStock: 0,
         dropshippingOptions: [baseOption],
       })
     ).toBe(true);
   });
 
-  it("indisponible si ni stock BENDO ni fournisseur fiable", () => {
+  it("indisponible si ni stock SENDUU ni fournisseur fiable", () => {
     expect(
       isProductAvailableForSale({
-        bendoStock: 0,
+        ownStock: 0,
         dropshippingOptions: [{ ...baseOption, status: "BLOCKED" }],
       })
     ).toBe(false);

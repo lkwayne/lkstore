@@ -7,7 +7,7 @@ import { searchProducts } from "@/services/catalog.service";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Recherche — BENDO",
+  title: "Recherche — SENDUU",
 };
 
 export default async function SearchPage({

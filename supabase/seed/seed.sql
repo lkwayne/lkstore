@@ -1,5 +1,5 @@
 -- =========================================================================
--- BENDO — Seed de démonstration
+-- SENDUU — Seed de démonstration
 -- Toutes les données ci-dessous sont fictives, à usage de test uniquement.
 -- À exécuter après supabase/migrations/0001_init.sql.
 -- =========================================================================
@@ -31,7 +31,7 @@ insert into brands (id, name, slug) values
   ('33333333-0000-4000-8000-000000000002', 'Tecno', 'tecno'),
   ('33333333-0000-4000-8000-000000000003', 'HP', 'hp'),
   ('33333333-0000-4000-8000-000000000004', 'Hisense', 'hisense'),
-  ('33333333-0000-4000-8000-000000000005', 'BENDO Essentials', 'bendo-essentials');
+  ('33333333-0000-4000-8000-000000000005', 'SENDUU Essentials', 'senduu-essentials');
 
 -- -------------------------------------------------------------------------
 -- FOURNISSEUR FICTIF (pour illustrer le flux dropshipping)
@@ -52,21 +52,21 @@ insert into products (
     'Samsung Galaxy A15 128 Go', 'samsung-galaxy-a15-128go', 'TEL-SAM-A15-128',
     'Écran 6,5" 90 Hz, triple caméra 50 MP, batterie 5000 mAh. Garantie 12 mois.',
     '33333333-0000-4000-8000-000000000001', '11111111-0000-4000-8000-000000000001', '22222222-0000-4000-8000-000000000001',
-    89900, 99900, 68000, 14, 5, 'BENDO_STOCK', true, true, 'PUBLISHED'
+    89900, 99900, 68000, 14, 5, 'SENDUU_STOCK', true, true, 'PUBLISHED'
   ),
   (
     '55555555-0000-4000-8000-000000000002',
     'Tecno Spark 20 128 Go', 'tecno-spark-20-128go', 'TEL-TEC-SP20-128',
     'Écran AMOLED 6,6", 8 Go RAM (extensible), charge rapide 33W.',
     '33333333-0000-4000-8000-000000000002', '11111111-0000-4000-8000-000000000001', '22222222-0000-4000-8000-000000000001',
-    69900, null, 52000, 22, 5, 'BENDO_STOCK', true, true, 'PUBLISHED'
+    69900, null, 52000, 22, 5, 'SENDUU_STOCK', true, true, 'PUBLISHED'
   ),
   (
     '55555555-0000-4000-8000-000000000003',
     'Tablette Samsung Galaxy Tab A9', 'samsung-galaxy-tab-a9', 'TAB-SAM-A9',
     'Écran 8,7", idéale pour les enfants et l’usage quotidien.',
     '33333333-0000-4000-8000-000000000001', '11111111-0000-4000-8000-000000000001', '22222222-0000-4000-8000-000000000002',
-    79900, null, 61000, 8, 5, 'BENDO_STOCK', true, false, 'PUBLISHED'
+    79900, null, 61000, 8, 5, 'SENDUU_STOCK', true, false, 'PUBLISHED'
   ),
   (
     '55555555-0000-4000-8000-000000000004',
@@ -87,24 +87,24 @@ insert into products (
     'Réfrigérateur Hisense 168L', 'refrigerateur-hisense-168l', 'ELEC-HIS-168L',
     'Simple porte, faible consommation, idéal pour un studio ou petit salon.',
     '33333333-0000-4000-8000-000000000004', '11111111-0000-4000-8000-000000000003', '22222222-0000-4000-8000-000000000005',
-    159900, null, 128000, 3, 2, 'BENDO_STOCK', true, true, 'PUBLISHED'
+    159900, null, 128000, 3, 2, 'SENDUU_STOCK', true, true, 'PUBLISHED'
   ),
   (
     '55555555-0000-4000-8000-000000000007',
     'Kit solaire 100W avec batterie', 'kit-solaire-100w-batterie', 'SOLAR-KIT-100W',
     'Panneau 100W, batterie 12V, régulateur et câblage inclus. Idéal zones sans réseau stable.',
     '33333333-0000-4000-8000-000000000005', '11111111-0000-4000-8000-000000000006', '22222222-0000-4000-8000-000000000006',
-    89900, null, 71000, 6, 3, 'BENDO_STOCK', true, true, 'PUBLISHED'
+    89900, null, 71000, 6, 3, 'SENDUU_STOCK', true, true, 'PUBLISHED'
   ),
   (
     '55555555-0000-4000-8000-000000000008',
     'Housse smartphone universelle', 'housse-smartphone-universelle', 'ACC-HOUSSE-UNI',
     'Housse silicone antichoc, plusieurs coloris disponibles.',
     '33333333-0000-4000-8000-000000000005', '11111111-0000-4000-8000-000000000002', '22222222-0000-4000-8000-000000000004',
-    3500, null, 1200, 40, 10, 'BENDO_STOCK', true, true, 'DRAFT'
+    3500, null, 1200, 40, 10, 'SENDUU_STOCK', true, true, 'DRAFT'
   );
 
--- Lien fournisseur pour le produit en dropshipping (chargeur, stock BENDO = 0)
+-- Lien fournisseur pour le produit en dropshipping (chargeur, stock SENDUU = 0)
 insert into supplier_products (supplier_id, product_id, supplier_sku, supplier_cost, supplier_stock, shipping_cost, estimated_delivery_days, priority, status) values
   ('44444444-0000-4000-8000-000000000001', '55555555-0000-4000-8000-000000000005', 'CN-CHG33W', 2100, 150, 800, 14, 1, 'ACTIVE');
 
@@ -125,7 +125,7 @@ insert into product_images (product_id, url, alt_text, sort_order) values
 -- MAGASIN DE DÉMONSTRATION (pour le retrait en magasin)
 -- -------------------------------------------------------------------------
 insert into stores (id, name, address, city, phone, is_active) values
-  ('66666666-0000-4000-8000-000000000001', 'BENDO Bepanda', 'Carrefour Bepanda, Douala', 'Douala', '+237 697 094 600', true);
+  ('66666666-0000-4000-8000-000000000001', 'SENDUU Bepanda', 'Carrefour Bepanda, Douala', 'Douala', '+237 697 094 600', true);
 
 insert into shipping_zones (city, neighborhood, fee, estimated_days, cod_allowed, is_active) values
   ('Douala', 'Bepanda', 1000, 1, true, true),

@@ -3,9 +3,9 @@ import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
 
 export const metadata: Metadata = {
-  title: "BENDO — Tout ce qu'il vous faut",
+  title: "SENDUU — Achetez mieux, payez moins, nous livrons",
   description:
-    "BENDO, votre boutique en ligne au Cameroun : téléphones, informatique, électroménager, mode et bien plus. Livraison et retrait en magasin.",
+    "SENDUU, votre boutique en ligne au Cameroun : téléphones, informatique, électroménager, mode et bien plus. Livraison et retrait en magasin.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
