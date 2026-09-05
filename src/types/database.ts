@@ -171,6 +171,65 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["stores"]["Row"]>;
       };
+      orders: {
+        Row: {
+          id: string;
+          order_number: string;
+          customer_id: string | null;
+          status:
+            | "PENDING"
+            | "CONFIRMED"
+            | "PROCESSING"
+            | "READY_FOR_PICKUP"
+            | "SHIPPED"
+            | "OUT_FOR_DELIVERY"
+            | "DELIVERED"
+            | "COMPLETED"
+            | "CANCELLED"
+            | "RETURNED";
+          reception_method: "DELIVERY" | "STORE_PICKUP";
+          shipping_address_id: string | null;
+          store_id: string | null;
+          subtotal: number;
+          shipping_fee: number;
+          discount_total: number;
+          total: number;
+          payment_method: "CASH_ON_DELIVERY" | "PAY_IN_STORE";
+          payment_status: "PENDING" | "PAID" | "FAILED" | "CANCELLED";
+          coupon_id: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["orders"]["Row"]> & {
+          order_number: string;
+          reception_method: "DELIVERY" | "STORE_PICKUP";
+          payment_method: "CASH_ON_DELIVERY" | "PAY_IN_STORE";
+        };
+        Update: Partial<Database["public"]["Tables"]["orders"]["Row"]>;
+      };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string;
+          variant_id: string | null;
+          product_name_snapshot: string;
+          unit_price: number;
+          quantity: number;
+          fulfillment_type: "SENDUU_STOCK" | "DROPSHIPPING" | "MIXED";
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["order_items"]["Row"]> & {
+          order_id: string;
+          product_id: string;
+          product_name_snapshot: string;
+          unit_price: number;
+          quantity: number;
+          fulfillment_type: "SENDUU_STOCK" | "DROPSHIPPING" | "MIXED";
+        };
+        Update: Partial<Database["public"]["Tables"]["order_items"]["Row"]>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

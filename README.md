@@ -101,13 +101,38 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
-- Dashboard admin (produits, stocks, fournisseurs, commandes).
+- Dashboard admin complet (produits, stocks, fournisseurs) — seule la vue
+  commandes existe pour l'instant.
 - Filtres catalogue avancés (marque, fourchette de prix) — seuls le tri et
   la pagination sont branchés pour l'instant.
-- Authentification — le panier et les commandes sont pour l'instant en mode
-  invité (pas de compte client, pas d'historique de commandes consultable).
+- Lien automatique entre une commande et le compte client connecté au
+  moment du checkout (le checkout reste en mode invité pour l'instant,
+  même si le client est connecté).
+- Réinitialisation de mot de passe, connexion via réseaux sociaux.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
+
+## Module Authentification (livré)
+
+- `/login`, `/register` — connexion et inscription par email/mot de passe
+  via Supabase Auth. Le profil (`profiles`) est créé automatiquement par le
+  trigger `handle_new_user` (voir `0001_init.sql`).
+- `/account` — affiche le profil connecté ; propose l'accès au back-office
+  si le rôle n'est pas `CUSTOMER`.
+- `/admin/orders` — tableau de bord commandes réservé au staff (`ADMIN`,
+  `MANAGER`, `LOGISTICS`, `CUSTOMER_SUPPORT`, `MARKETING`) : liste les
+  commandes récentes et permet de changer leur statut. Protégé par
+  `src/app/admin/layout.tsx` (redirection si non connecté ou non-staff) —
+  la sécurité réelle vient toutefois des policies RLS (`orders_staff_update`
+  etc.), pas de cette seule vérification côté page.
+- `src/proxy.ts` (anciennement `middleware.ts`, renommé selon la nouvelle
+  convention Next.js 16) rafraîchit la session Supabase sur chaque requête.
+- **Pour créer ton premier compte administrateur** : crée un compte via
+  `/register`, puis dans Supabase (SQL Editor) :
+  ```sql
+  update profiles set role = 'ADMIN' where id =
+    (select id from auth.users where email = 'ton-email@exemple.com');
+  ```
 
 ## Module Catalogue (livré)
 
