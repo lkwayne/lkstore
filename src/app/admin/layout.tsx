@@ -32,6 +32,20 @@ export default async function AdminLayout({
           </div>
           <SignOutButton />
         </div>
+        <nav className="mx-auto max-w-6xl px-4 pb-3 sm:px-6">
+          <ul className="flex gap-4 text-sm font-medium text-neutral-500">
+            <li>
+              <Link href="/admin/orders" className="hover:text-brand-navy">
+                Commandes
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/products" className="hover:text-brand-navy">
+                Produits
+              </Link>
+            </li>
+          </ul>
+        </nav>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         {children}

@@ -101,16 +101,29 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
-- Dashboard admin complet (produits, stocks, fournisseurs) — seule la vue
-  commandes existe pour l'instant.
-- Filtres catalogue avancés (marque, fourchette de prix) — seuls le tri et
-  la pagination sont branchés pour l'instant.
+- Fournisseurs, dropshipping, commandes mixtes gérées depuis l'admin (encore
+  en base uniquement).
+- Statistiques de vente dans le dashboard admin.
+- Filtres catalogue avancés côté boutique (marque, fourchette de prix).
 - Lien automatique entre une commande et le compte client connecté au
-  moment du checkout (le checkout reste en mode invité pour l'instant,
-  même si le client est connecté).
+  moment du checkout (le checkout reste en mode invité pour l'instant).
+- Upload d'image (le formulaire produit accepte une URL d'image publique,
+  pas encore un vrai upload vers Supabase Storage).
 - Réinitialisation de mot de passe, connexion via réseaux sociaux.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
+
+## Module Admin Produits (livré)
+
+- `/admin/products` — liste tous les produits (tous statuts), avec édition
+  rapide du stock et du statut directement depuis le tableau.
+- `/admin/products/new` et `/admin/products/[id]/edit` — création et
+  modification complètes (nom, catégorie/sous-catégorie, marque, prix, coût
+  interne, stock, type de fulfillment, disponibilité COD/retrait, statut).
+- Réservé au staff via le même layout `/admin` que le module commandes ;
+  la sécurité réelle vient des policies RLS `products_staff_write` /
+  `products_public_read` (un compte non-staff ne verrait jamais les
+  brouillons, même en contournant la page).
 
 ## Module Authentification (livré)
 

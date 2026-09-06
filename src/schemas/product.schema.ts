@@ -17,6 +17,12 @@ export const productSchema = z.object({
   fulfillmentType: z.enum(FULFILLMENT_TYPES).default("SENDUU_STOCK"),
   codAvailable: z.boolean().default(true),
   storePickupAvailable: z.boolean().default(false),
+  status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
+  imageUrl: z
+    .string()
+    .url("URL d'image invalide")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type ProductInput = z.infer<typeof productSchema>;

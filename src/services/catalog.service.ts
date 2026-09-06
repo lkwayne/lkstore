@@ -242,3 +242,58 @@ export async function getProductsByIds(ids: string[]): Promise<ProductSummary[]>
 
   return (data ?? []).map((row) => mapProductSummary(row as unknown as Record<string, unknown>));
 }
+
+type BrandRow = Pick<Database["public"]["Tables"]["brands"]["Row"], "id" | "name" | "slug">;
+
+export interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export async function getBrands(): Promise<Brand[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("brands")
+    .select("id, name, slug")
+    .order("name", { ascending: true })
+    .returns<BrandRow[]>();
+
+  if (error) {
+    throw new Error(`Impossible de charger les marques : ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+type SubcategoryRow = Pick<
+  Database["public"]["Tables"]["subcategories"]["Row"],
+  "id" | "category_id" | "name" | "slug"
+>;
+
+export interface Subcategory {
+  id: string;
+  categoryId: string;
+  name: string;
+  slug: string;
+}
+
+export async function getAllSubcategories(): Promise<Subcategory[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("subcategories")
+    .select("id, category_id, name, slug")
+    .order("name", { ascending: true })
+    .returns<SubcategoryRow[]>();
+
+  if (error) {
+    throw new Error(`Impossible de charger les sous-catégories : ${error.message}`);
+  }
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    categoryId: row.category_id,
+    name: row.name,
+    slug: row.slug,
+  }));
+}
