@@ -22,7 +22,7 @@ export default async function AdminLayout({
       <header className="border-b border-neutral-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <div>
-            <Link href="/admin/orders" className="text-lg font-bold text-brand-navy">
+            <Link href="/admin" className="text-lg font-bold text-brand-navy">
               SENDUU <span className="text-brand-orange">Admin</span>
             </Link>
             <p className="text-xs text-neutral-400">
@@ -34,6 +34,11 @@ export default async function AdminLayout({
         </div>
         <nav className="mx-auto max-w-6xl px-4 pb-3 sm:px-6">
           <ul className="flex gap-4 text-sm font-medium text-neutral-500">
+            <li>
+              <Link href="/admin" className="hover:text-brand-navy">
+                Tableau de bord
+              </Link>
+            </li>
             <li>
               <Link href="/admin/orders" className="hover:text-brand-navy">
                 Commandes

@@ -103,7 +103,7 @@ npm run test     # Tests unitaires (Vitest)
 
 - Fournisseurs, dropshipping, commandes mixtes gérées depuis l'admin (encore
   en base uniquement).
-- Statistiques de vente dans le dashboard admin.
+- Promotions/coupons (table existante, aucune interface).
 - Filtres catalogue avancés côté boutique (marque, fourchette de prix).
 - Lien automatique entre une commande et le compte client connecté au
   moment du checkout (le checkout reste en mode invité pour l'instant).
@@ -112,6 +112,16 @@ npm run test     # Tests unitaires (Vitest)
 - Réinitialisation de mot de passe, connexion via réseaux sociaux.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
+
+## Tableau de bord Admin (livré)
+
+- `/admin` — chiffre d'affaires (hors commandes annulées/retournées),
+  nombre de commandes, panier moyen, alertes stock faible, répartition des
+  commandes par statut, meilleures ventes.
+- Agrégats calculés côté application à partir des données déjà protégées
+  par RLS — pas de fonction SQL dédiée pour l'instant ; à revoir si le
+  volume de commandes grossit significativement (voir commentaire dans
+  `src/services/admin-stats.service.ts`).
 
 ## Module Admin Produits (livré)
 

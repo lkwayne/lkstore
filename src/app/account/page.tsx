@@ -65,7 +65,7 @@ export default async function AccountPage() {
 
           {staff ? (
             <Link
-              href="/admin/orders"
+              href="/admin"
               className="bg-brand-gradient mt-4 flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white"
             >
               Accéder au tableau de bord commandes
