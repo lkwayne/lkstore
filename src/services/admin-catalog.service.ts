@@ -205,3 +205,17 @@ export async function setProductStatus(
     throw new Error(`Impossible de mettre à jour le statut : ${error.message}`);
   }
 }
+
+export interface ProductOption {
+  id: string;
+  name: string;
+}
+
+export async function getProductOptions(): Promise<ProductOption[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("products").select("id, name").order("name");
+  if (error) {
+    throw new Error(`Impossible de charger les produits : ${error.message}`);
+  }
+  return data ?? [];
+}

@@ -171,6 +171,79 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["stores"]["Row"]>;
       };
+      suppliers: {
+        Row: {
+          id: string;
+          name: string;
+          company_name: string | null;
+          country: string | null;
+          city: string | null;
+          phone: string | null;
+          whatsapp: string | null;
+          email: string | null;
+          website: string | null;
+          currency: string;
+          average_lead_time_days: number | null;
+          status: "ACTIVE" | "INACTIVE" | "PENDING" | "BLOCKED";
+          internal_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["suppliers"]["Row"]> & {
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["suppliers"]["Row"]>;
+      };
+      supplier_products: {
+        Row: {
+          id: string;
+          supplier_id: string;
+          product_id: string;
+          supplier_sku: string | null;
+          supplier_cost: number;
+          supplier_stock: number;
+          shipping_cost: number;
+          estimated_delivery_days: number | null;
+          priority: number;
+          status: "ACTIVE" | "INACTIVE" | "PENDING" | "BLOCKED";
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["supplier_products"]["Row"]> & {
+          supplier_id: string;
+          product_id: string;
+          supplier_cost: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["supplier_products"]["Row"]>;
+      };
+      fulfillment_orders: {
+        Row: {
+          id: string;
+          order_id: string;
+          supplier_id: string | null;
+          product_id: string;
+          quantity: number;
+          supplier_cost: number | null;
+          shipping_cost: number | null;
+          status:
+            | "PENDING_SUPPLIER"
+            | "SENT_TO_SUPPLIER"
+            | "CONFIRMED_BY_SUPPLIER"
+            | "SHIPPED"
+            | "TRACKING_RECEIVED"
+            | "DELIVERED"
+            | "FAILED";
+          tracking_number: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["fulfillment_orders"]["Row"]> & {
+          order_id: string;
+          product_id: string;
+          quantity: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["fulfillment_orders"]["Row"]>;
+      };
       orders: {
         Row: {
           id: string;

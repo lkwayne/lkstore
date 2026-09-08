@@ -101,8 +101,6 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
-- Fournisseurs, dropshipping, commandes mixtes gérées depuis l'admin (encore
-  en base uniquement).
 - Promotions/coupons (table existante, aucune interface).
 - Filtres catalogue avancés côté boutique (marque, fourchette de prix).
 - Lien automatique entre une commande et le compte client connecté au
@@ -112,6 +110,23 @@ npm run test     # Tests unitaires (Vitest)
 - Réinitialisation de mot de passe, connexion via réseaux sociaux.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
+
+## Module Fournisseurs & Dropshipping (livré)
+
+- `/admin/suppliers` — liste, création, édition des fournisseurs (contact,
+  pays, devise, délai moyen, statut, notes internes).
+- Sur chaque fiche fournisseur : liaison de produits (coût, stock
+  fournisseur, frais de livraison, priorité) — c'est cette priorité que
+  `selectPrimarySupplier` (`supplier-selection.service.ts`) et la fonction
+  `create_order()` utilisent pour choisir automatiquement le fournisseur
+  d'un article en dropshipping.
+- `/admin/fulfillment` — suivi des commandes fournisseur générées
+  automatiquement à la création d'une commande contenant un article
+  `DROPSHIPPING` ou `MIXED` : changement de statut (envoyée, confirmée,
+  expédiée...) et numéro de suivi.
+- Réservé au staff, protégé par les policies RLS `suppliers_staff_only`,
+  `supplier_products_staff_only` et `fulfillment_orders_staff_only` — ces
+  données ne sont jamais exposées côté boutique publique.
 
 ## Tableau de bord Admin (livré)
 
