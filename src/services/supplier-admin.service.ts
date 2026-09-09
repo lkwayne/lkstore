@@ -30,6 +30,7 @@ export interface LinkedProduct {
 
 export interface FulfillmentOrderItem {
   id: string;
+  reference: string;
   orderId: string;
   orderNumber: string;
   supplierName: string | null;
@@ -224,7 +225,7 @@ export async function listFulfillmentOrders(): Promise<FulfillmentOrderItem[]> {
   const { data, error } = await supabase
     .from("fulfillment_orders")
     .select(
-      "id, order_id, quantity, status, tracking_number, created_at, product:products(name), supplier:suppliers(name), order:orders(order_number)"
+      "id, reference, order_id, quantity, status, tracking_number, created_at, product:products(name), supplier:suppliers(name), order:orders(order_number)"
     )
     .order("created_at", { ascending: false });
 
@@ -239,6 +240,7 @@ export async function listFulfillmentOrders(): Promise<FulfillmentOrderItem[]> {
     const order = r.order as { order_number: string } | null;
     return {
       id: r.id as string,
+      reference: r.reference as string,
       orderId: r.order_id as string,
       orderNumber: order?.order_number ?? "—",
       supplierName: supplier?.name ?? null,

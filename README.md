@@ -122,11 +122,27 @@ npm run test     # Tests unitaires (Vitest)
   d'un article en dropshipping.
 - `/admin/fulfillment` — suivi des commandes fournisseur générées
   automatiquement à la création d'une commande contenant un article
-  `DROPSHIPPING` ou `MIXED` : changement de statut (envoyée, confirmée,
-  expédiée...) et numéro de suivi.
+  `DROPSHIPPING` ou `MIXED` : chaque entrée reçoit une **référence interne
+  automatique** (`FUL-2026-000001`, générée par trigger PostgreSQL) dès sa
+  création ; le numéro de suivi transporteur reste un champ séparé, rempli
+  manuellement une fois reçu du fournisseur — impossible à générer
+  honnêtement puisqu'il vient d'un tiers réel.
 - Réservé au staff, protégé par les policies RLS `suppliers_staff_only`,
   `supplier_products_staff_only` et `fulfillment_orders_staff_only` — ces
   données ne sont jamais exposées côté boutique publique.
+
+## Durcissement sécurité (livré)
+
+Deux failles de contrôle d'accès corrigées (`0005_security_hardening.sql`) :
+- **Auto-promotion de rôle** : un trigger (`prevent_self_role_change`)
+  bloque toute modification de `profiles.role` effectuée depuis une session
+  utilisateur authentifiée. Seule une connexion privilégiée directe
+  (service_role / SQL Editor) peut changer un rôle.
+- **Contournement du checkout** : les policies d'insertion directe sur
+  `orders` / `order_items` sont désormais réservées au staff — un client ne
+  peut plus créer une commande "à la main" avec un prix ou un statut
+  arbitraire. `create_order()` (SECURITY DEFINER) n'est pas affectée et
+  reste le seul chemin de création de commande pour un client.
 
 ## Tableau de bord Admin (livré)
 

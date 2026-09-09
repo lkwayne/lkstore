@@ -68,7 +68,7 @@ export function FulfillmentRowEditor({
         onChange={(e) => setTracking(e.target.value)}
         onBlur={commitTracking}
         disabled={isPending}
-        placeholder="N° de suivi"
+        placeholder="N° de suivi transporteur"
         className="rounded-lg border border-neutral-200 px-2 py-1 text-xs"
       />
       {error ? <span className="text-[10px] text-brand-red">{error}</span> : null}

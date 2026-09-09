@@ -25,6 +25,7 @@ export default async function AdminFulfillmentPage() {
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="border-b border-neutral-200 text-xs uppercase tracking-wide text-neutral-400">
               <tr>
+                <th className="px-4 py-3 font-medium">Référence</th>
                 <th className="px-4 py-3 font-medium">Commande</th>
                 <th className="px-4 py-3 font-medium">Produit</th>
                 <th className="px-4 py-3 font-medium">Fournisseur</th>
@@ -35,7 +36,10 @@ export default async function AdminFulfillmentPage() {
             <tbody className="divide-y divide-neutral-100">
               {items.map((item) => (
                 <tr key={item.id}>
-                  <td className="px-4 py-3 font-semibold text-brand-navy">
+                  <td className="px-4 py-3 font-mono text-xs font-semibold text-brand-navy">
+                    {item.reference}
+                  </td>
+                  <td className="px-4 py-3 text-neutral-500">
                     {item.orderNumber}
                   </td>
                   <td className="px-4 py-3 text-neutral-500">{item.productName}</td>

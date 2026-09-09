@@ -222,6 +222,7 @@ export interface Database {
           supplier_id: string | null;
           product_id: string;
           quantity: number;
+          reference: string;
           supplier_cost: number | null;
           shipping_cost: number | null;
           status:
