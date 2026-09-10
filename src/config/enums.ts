@@ -48,6 +48,9 @@ export type ReceptionMethod = (typeof RECEPTION_METHODS)[number];
 export const PRODUCT_STATUSES = ["DRAFT", "PUBLISHED", "ARCHIVED"] as const;
 export type ProductStatus = (typeof PRODUCT_STATUSES)[number];
 
+export const PRODUCT_CONDITIONS = ["NEUF", "OCCASION"] as const;
+export type ProductCondition = (typeof PRODUCT_CONDITIONS)[number];
+
 export const FULFILLMENT_ORDER_STATUSES = [
   "PENDING_SUPPLIER",
   "SENT_TO_SUPPLIER",

@@ -4,7 +4,7 @@
  * Supabase réel connecté — voir src/types/database.ts.
  */
 
-import type { FulfillmentType, ProductStatus } from "@/config/enums";
+import type { FulfillmentType, ProductCondition, ProductStatus } from "@/config/enums";
 
 export interface Brand {
   id: string;
@@ -46,6 +46,7 @@ export interface ProductSummary {
   price: number;
   compareAtPrice: number | null;
   stockQuantity: number;
+  condition: ProductCondition;
   brand: Pick<Brand, "id" | "name" | "slug"> | null;
   primaryImageUrl: string | null;
   averageRating: number | null;

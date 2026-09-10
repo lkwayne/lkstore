@@ -88,6 +88,7 @@ export interface Database {
           cod_available: boolean;
           store_pickup_available: boolean;
           status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+          condition: "NEUF" | "OCCASION";
           seo_title: string | null;
           seo_description: string | null;
           created_at: string;

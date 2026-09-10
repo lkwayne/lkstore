@@ -12,7 +12,7 @@ const DEFAULT_PAGE_SIZE = 12;
 
 // Sélection publique stricte : jamais cost_price, jamais de jointure fournisseur.
 const PRODUCT_SUMMARY_SELECT = `
-  id, name, slug, price, compare_at_price, stock_quantity,
+  id, name, slug, price, compare_at_price, stock_quantity, condition,
   brand:brands ( id, name, slug ),
   product_images ( url, sort_order )
 `;
@@ -29,6 +29,7 @@ export function mapProductSummary(row: Record<string, unknown>): ProductSummary 
     price: Number(row.price),
     compareAtPrice: row.compare_at_price != null ? Number(row.compare_at_price) : null,
     stockQuantity: Number(row.stock_quantity),
+    condition: (row.condition as ProductSummary["condition"]) ?? "NEUF",
     brand: brand ? { id: brand.id, name: brand.name, slug: brand.slug } : null,
     primaryImageUrl: primaryImage?.url ?? null,
     // Les notes moyennes seront calculées via une vue Supabase dédiée
@@ -136,7 +137,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
     .from("products")
     .select(
       `
-      id, name, slug, description, price, compare_at_price, stock_quantity,
+      id, name, slug, description, price, compare_at_price, stock_quantity, condition,
       fulfillment_type, cod_available, store_pickup_available, status,
       seo_title, seo_description,
       brand:brands ( id, name, slug ),

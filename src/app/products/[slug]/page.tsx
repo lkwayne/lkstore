@@ -83,9 +83,20 @@ export default async function ProductDetailPage({
                 </span>
               ) : null}
 
-              <h1 className="mt-1 text-2xl font-bold text-brand-navy sm:text-3xl">
-                {product.name}
-              </h1>
+              <div className="mt-1 flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-brand-navy sm:text-3xl">
+                  {product.name}
+                </h1>
+                <span
+                  className={
+                    product.condition === "OCCASION"
+                      ? "shrink-0 rounded-full bg-brand-navy px-2.5 py-1 text-xs font-semibold text-white"
+                      : "shrink-0 rounded-full bg-brand-surface px-2.5 py-1 text-xs font-semibold text-brand-navy"
+                  }
+                >
+                  {product.condition === "OCCASION" ? "Occasion" : "Neuf"}
+                </span>
+              </div>
 
               <div className="mt-4 flex items-baseline gap-3">
                 <span className="text-3xl font-extrabold text-brand-navy">

@@ -159,8 +159,17 @@ Deux failles de contrôle d'accès corrigées (`0005_security_hardening.sql`) :
 - `/admin/products` — liste tous les produits (tous statuts), avec édition
   rapide du stock et du statut directement depuis le tableau.
 - `/admin/products/new` et `/admin/products/[id]/edit` — création et
-  modification complètes (nom, catégorie/sous-catégorie, marque, prix, coût
-  interne, stock, type de fulfillment, disponibilité COD/retrait, statut).
+  modification complètes : titre, description, **état (Neuf / Occasion)**,
+  catégorie/sous-catégorie, marque, stock, type de fulfillment,
+  disponibilité COD/retrait, statut.
+- **Prix réel / Prix promo** (tous deux en FCFA, affichés avec suffixe) :
+  le formulaire distingue le prix réel (toujours affiché) et un prix promo
+  optionnel. Si un prix promo est saisi, c'est lui qui est facturé et le
+  prix réel s'affiche barré sur la boutique — logique de conversion pure et
+  testée dans `src/schemas/product-form.schema.ts`
+  (`toProductInput`/`fromProductInput`). En base, `products.price` reste
+  toujours le montant facturé et `products.compare_at_price` la référence
+  barrée, inchangé pour le reste de l'application (panier, checkout).
 - Réservé au staff via le même layout `/admin` que le module commandes ;
   la sécurité réelle vient des policies RLS `products_staff_write` /
   `products_public_read` (un compte non-staff ne verrait jamais les

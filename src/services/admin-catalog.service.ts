@@ -65,7 +65,7 @@ export async function getProductForEdit(id: string): Promise<AdminProductDetail 
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, name, slug, sku, description, brand_id, category_id, subcategory_id, price, compare_at_price, cost_price, stock_quantity, low_stock_threshold, fulfillment_type, cod_available, store_pickup_available, status"
+      "id, name, slug, sku, condition, description, brand_id, category_id, subcategory_id, price, compare_at_price, cost_price, stock_quantity, low_stock_threshold, fulfillment_type, cod_available, store_pickup_available, status"
     )
     .eq("id", id)
     .maybeSingle();
@@ -81,6 +81,7 @@ export async function getProductForEdit(id: string): Promise<AdminProductDetail 
     name: r.name as string,
     slug: r.slug as string,
     sku: r.sku as string,
+    condition: r.condition as ProductInput["condition"],
     description: (r.description as string) ?? "",
     brandId: r.brand_id as string | null,
     categoryId: r.category_id as string | null,
@@ -112,6 +113,7 @@ function toRow(input: ProductInput) {
     name: input.name,
     slug: input.slug,
     sku: input.sku,
+    condition: input.condition,
     description: input.description || null,
     brand_id: input.brandId || null,
     category_id: input.categoryId || null,

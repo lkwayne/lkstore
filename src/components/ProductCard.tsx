@@ -37,6 +37,11 @@ export function ProductCard({ product }: { product: ProductSummary }) {
             -{discountPercent}%
           </span>
         ) : null}
+        {product.condition === "OCCASION" ? (
+          <span className="absolute right-2 top-2 rounded-full bg-brand-navy px-2 py-1 text-xs font-semibold text-white">
+            Occasion
+          </span>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-3">
