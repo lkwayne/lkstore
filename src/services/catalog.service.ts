@@ -14,12 +14,15 @@ const DEFAULT_PAGE_SIZE = 12;
 const PRODUCT_SUMMARY_SELECT = `
   id, name, slug, price, compare_at_price, stock_quantity, condition,
   brand:brands ( id, name, slug ),
-  product_images ( url, sort_order )
+  product_images ( url, sort_order, media_type )
 `;
 
 export function mapProductSummary(row: Record<string, unknown>): ProductSummary {
-  const images = (row.product_images as { url: string; sort_order: number }[] | null) ?? [];
-  const primaryImage = [...images].sort((a, b) => a.sort_order - b.sort_order)[0];
+  const images =
+    (row.product_images as { url: string; sort_order: number; media_type?: "IMAGE" | "VIDEO" }[] | null) ?? [];
+  const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
+  // La vignette du catalogue doit toujours être une photo, jamais une vidéo.
+  const primaryImage = sorted.find((img) => img.media_type !== "VIDEO") ?? sorted[0];
   const brand = row.brand as { id: string; name: string; slug: string } | null;
 
   return {
@@ -143,7 +146,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
       brand:brands ( id, name, slug ),
       category:categories ( id, name, slug ),
       subcategory:subcategories ( id, name, slug ),
-      product_images ( id, url, alt_text, sort_order )
+      product_images ( id, url, alt_text, sort_order, media_type )
     `
     )
     .eq("slug", slug)
@@ -160,9 +163,19 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
   const brand = row.brand as { id: string; name: string; slug: string } | null;
   const category = row.category as { id: string; name: string; slug: string } | null;
   const subcategory = row.subcategory as { id: string; name: string; slug: string } | null;
-  const images = ((row.product_images as ProductDetail["images"] | null) ?? []).sort(
-    (a, b) => a.sortOrder - b.sortOrder
-  );
+  const rawImages =
+    (row.product_images as
+      | { id: string; url: string; alt_text: string | null; sort_order: number; media_type: "IMAGE" | "VIDEO" }[]
+      | null) ?? [];
+  const images: ProductDetail["images"] = rawImages
+    .map((img) => ({
+      id: img.id,
+      url: img.url,
+      altText: img.alt_text,
+      sortOrder: img.sort_order,
+      mediaType: img.media_type,
+    }))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
   return {
     ...summary,

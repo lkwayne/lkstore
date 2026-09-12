@@ -34,6 +34,7 @@ export interface ProductImage {
   url: string;
   altText: string | null;
   sortOrder: number;
+  mediaType: "IMAGE" | "VIDEO";
 }
 
 /**

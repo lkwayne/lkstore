@@ -13,7 +13,9 @@ import {
 import type { ProductInput } from "@/schemas/product.schema";
 import { FULFILLMENT_TYPES, PRODUCT_CONDITIONS } from "@/config/enums";
 import { getProductFormOptions, type SubcategoryOption } from "@/app/actions/admin-catalog-options.actions";
-import { saveNewProduct, saveExistingProduct, type AdminActionResult } from "@/app/actions/admin-product.actions";
+import { saveNewProduct, saveExistingProduct, type SaveProductResult } from "@/app/actions/admin-product.actions";
+import { uploadMedia } from "@/app/actions/admin-media.actions";
+import { ProductMediaManager } from "@/components/admin/ProductMediaManager";
 import { formatPrice } from "@/lib/format-price";
 import type { Category } from "@/types/catalog";
 import type { BrandOption } from "@/services/admin-catalog.service";
@@ -67,6 +69,8 @@ export function ProductForm({
   const [brands, setBrands] = useState<BrandOption[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [stagedFiles, setStagedFiles] = useState<File[]>([]);
+  const [isSavingMedia, setIsSavingMedia] = useState(false);
 
   const {
     register,
@@ -104,15 +108,30 @@ export function ProductForm({
   async function onSubmit(data: ProductFormInput) {
     setServerError(null);
     const payload = toProductInput(data);
-    const result: AdminActionResult = productId
+    const result: SaveProductResult = productId
       ? await saveExistingProduct(productId, payload)
       : await saveNewProduct(payload);
 
-    // saveNewProduct/saveExistingProduct redirigent en cas de succès —
-    // on ne traite ici que l'échec.
     if (!result.success) {
       setServerError(result.error);
+      return;
     }
+
+    if (!productId && stagedFiles.length > 0) {
+      setIsSavingMedia(true);
+      const formData = new FormData();
+      stagedFiles.forEach((file) => formData.append("files", file));
+      const mediaResult = await uploadMedia(result.productId, formData);
+      setIsSavingMedia(false);
+      if (mediaResult.errors.length > 0) {
+        setServerError(
+          `Produit créé, mais certains médias n'ont pas pu être envoyés : ${mediaResult.errors.join(" ")}`
+        );
+        return;
+      }
+    }
+
+    router.push("/admin/products");
   }
 
   const filteredSubcategories = subcategories.filter(
@@ -163,8 +182,11 @@ export function ProductForm({
           />
         </Field>
 
-        <Field label="URL d'image (optionnel)" htmlFor="imageUrl" error={errors.imageUrl?.message}>
-          <input id="imageUrl" {...register("imageUrl")} placeholder="https://…" className={inputClass} />
+        <Field label="Photos et vidéo de l'article" htmlFor="media">
+          <ProductMediaManager
+            productId={productId}
+            onStagedFilesChange={setStagedFiles}
+          />
         </Field>
       </fieldset>
 
@@ -312,10 +334,10 @@ export function ProductForm({
       <div className="flex gap-3">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isSavingMedia}
           className="bg-brand-gradient rounded-full px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
         >
-          {isSubmitting ? "Enregistrement…" : "Enregistrer"}
+          {isSavingMedia ? "Envoi des médias…" : isSubmitting ? "Enregistrement…" : "Enregistrer"}
         </button>
         <button
           type="button"

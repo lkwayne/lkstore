@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { productSchema, type ProductInput } from "@/schemas/product.schema";
 import {
   createProduct,
@@ -11,25 +10,29 @@ import {
 } from "@/services/admin-catalog.service";
 
 export type AdminActionResult = { success: true } | { success: false; error: string };
+export type SaveProductResult =
+  | { success: true; productId: string }
+  | { success: false; error: string };
 
-export async function saveNewProduct(input: ProductInput): Promise<AdminActionResult> {
+export async function saveNewProduct(input: ProductInput): Promise<SaveProductResult> {
   const parsed = productSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "Certains champs du formulaire sont invalides." };
   }
+  let productId: string;
   try {
-    await createProduct(parsed.data);
+    productId = await createProduct(parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
   }
   revalidatePath("/admin/products");
-  redirect("/admin/products");
+  return { success: true, productId };
 }
 
 export async function saveExistingProduct(
   id: string,
   input: ProductInput
-): Promise<AdminActionResult> {
+): Promise<SaveProductResult> {
   const parsed = productSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "Certains champs du formulaire sont invalides." };
@@ -40,7 +43,8 @@ export async function saveExistingProduct(
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
   }
   revalidatePath("/admin/products");
-  redirect("/admin/products");
+  revalidatePath(`/admin/products/${id}/edit`);
+  return { success: true, productId: id };
 }
 
 export async function changeProductStock(

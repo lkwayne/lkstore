@@ -109,6 +109,8 @@ export interface Database {
           url: string;
           alt_text: string | null;
           sort_order: number;
+          media_type: "IMAGE" | "VIDEO";
+          storage_path: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["product_images"]["Row"]> & {

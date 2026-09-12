@@ -59,21 +59,54 @@ export default async function ProductDetailPage({
           </nav>
 
           <div className="grid gap-8 lg:grid-cols-2">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-brand-surface">
-              {product.images[0] ? (
-                <Image
-                  src={product.images[0].url}
-                  alt={product.images[0].altText ?? product.name}
-                  fill
-                  sizes="(min-width: 1024px) 45vw, 90vw"
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-sm text-neutral-400">
-                  Image à venir
+            <div>
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-brand-surface">
+                {product.images[0] ? (
+                  product.images[0].mediaType === "VIDEO" ? (
+                    <video
+                      src={product.images[0].url}
+                      controls
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={product.images[0].url}
+                      alt={product.images[0].altText ?? product.name}
+                      fill
+                      sizes="(min-width: 1024px) 45vw, 90vw"
+                      className="object-cover"
+                      priority
+                    />
+                  )
+                ) : (
+                  <div className="flex h-full items-center justify-center text-sm text-neutral-400">
+                    Image à venir
+                  </div>
+                )}
+              </div>
+
+              {product.images.length > 1 ? (
+                <div className="mt-3 grid grid-cols-5 gap-2">
+                  {product.images.slice(1, 6).map((media) => (
+                    <div
+                      key={media.id}
+                      className="relative aspect-square overflow-hidden rounded-lg bg-brand-surface"
+                    >
+                      {media.mediaType === "VIDEO" ? (
+                        <video src={media.url} className="h-full w-full object-cover" muted />
+                      ) : (
+                        <Image
+                          src={media.url}
+                          alt={media.altText ?? product.name}
+                          fill
+                          sizes="20vw"
+                          className="object-cover"
+                        />
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
+              ) : null}
             </div>
 
             <div>

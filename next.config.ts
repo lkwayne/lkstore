@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      // Permet l'upload de vidéos produit (jusqu'à ~25 Mo) via Server Actions.
+      bodySizeLimit: "30mb",
+    },
+  },
   images: {
     remotePatterns: [
       // Placeholders utilisés par le seed de démonstration — à retirer une

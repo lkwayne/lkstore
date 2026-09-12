@@ -175,6 +175,26 @@ Deux failles de contrôle d'accès corrigées (`0005_security_hardening.sql`) :
   `products_public_read` (un compte non-staff ne verrait jamais les
   brouillons, même en contournant la page).
 
+## Médias produit — photos et vidéo (livré)
+
+- Jusqu'à **7 médias par produit** (photos JPG/PNG/WebP/GIF, 5 Mo max, et
+  vidéos MP4/WebM/MOV, 25 Mo max), uploadés vers un bucket Supabase Storage
+  public dédié (`product-media`). Validation type/taille revérifiée côté
+  serveur (`src/services/product-media.service.ts`), pas seulement côté
+  formulaire.
+- Création d'un produit : les fichiers sont mis en attente localement (pas
+  encore d'ID produit) puis envoyés automatiquement une fois le produit
+  créé. Édition : upload immédiat.
+- Suppression d'un média : retire à la fois la ligne en base et le fichier
+  du stockage (pas de fichier orphelin).
+- Sur la boutique : la première photo (jamais une vidéo) sert de vignette
+  catalogue ; la fiche produit affiche le média principal (lecteur vidéo si
+  c'est une vidéo) plus une bande de vignettes pour les médias suivants,
+  visible sur mobile et desktop.
+- Accès en écriture au bucket réservé au staff (policies `storage.objects`
+  dédiées) ; lecture publique pour que les médias s'affichent sans
+  authentification.
+
 ## Module Authentification (livré)
 
 - `/login`, `/register` — connexion et inscription par email/mot de passe

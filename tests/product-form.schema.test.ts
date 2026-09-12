@@ -20,7 +20,6 @@ const baseForm: ProductFormInput = {
   codAvailable: true,
   storePickupAvailable: false,
   status: "PUBLISHED",
-  imageUrl: "",
 };
 
 describe("toProductInput", () => {
