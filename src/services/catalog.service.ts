@@ -6,6 +6,7 @@ import type {
   ProductDetail,
   ProductSort,
   ProductSummary,
+  Subcategory,
 } from "@/types/catalog";
 
 const DEFAULT_PAGE_SIZE = 12;
@@ -13,6 +14,7 @@ const DEFAULT_PAGE_SIZE = 12;
 // Sélection publique stricte : jamais cost_price, jamais de jointure fournisseur.
 const PRODUCT_SUMMARY_SELECT = `
   id, name, slug, price, compare_at_price, stock_quantity, condition,
+  is_featured, is_new, is_best_seller, is_flash_deal, is_on_sale,
   brand:brands ( id, name, slug ),
   product_images ( url, sort_order, media_type )
 `;
@@ -39,19 +41,42 @@ export function mapProductSummary(row: Record<string, unknown>): ProductSummary 
     // (reviews approuvées uniquement) une fois le module Avis branché.
     averageRating: null,
     reviewCount: 0,
+    isFeatured: Boolean(row.is_featured),
+    isNew: Boolean(row.is_new),
+    isBestSeller: Boolean(row.is_best_seller),
+    isFlashDeal: Boolean(row.is_flash_deal),
+    isOnSale: Boolean(row.is_on_sale),
   };
 }
 
 type CategoryRow = Pick<
   Database["public"]["Tables"]["categories"]["Row"],
-  "id" | "name" | "slug" | "image_url" | "sort_order"
+  "id" | "name" | "slug" | "description" | "image_url" | "icon" | "sort_order" | "is_active" | "is_visible"
 >;
+
+function mapCategory(row: CategoryRow): Category {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    imageUrl: row.image_url,
+    icon: row.icon,
+    sortOrder: row.sort_order,
+    isActive: row.is_active,
+    isVisible: row.is_visible,
+  };
+}
+
+const CATEGORY_SELECT = "id, name, slug, description, image_url, icon, sort_order, is_active, is_visible";
 
 export async function getCategories(): Promise<Category[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, image_url, sort_order")
+    .select(CATEGORY_SELECT)
+    .eq("is_active", true)
+    .eq("is_visible", true)
     .order("sort_order", { ascending: true })
     .returns<CategoryRow[]>();
 
@@ -59,21 +84,17 @@ export async function getCategories(): Promise<Category[]> {
     throw new Error(`Impossible de charger les catégories : ${error.message}`);
   }
 
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    imageUrl: row.image_url,
-    sortOrder: row.sort_order,
-  }));
+  return (data ?? []).map(mapCategory);
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, image_url, sort_order")
+    .select(CATEGORY_SELECT)
     .eq("slug", slug)
+    .eq("is_active", true)
+    .eq("is_visible", true)
     .maybeSingle()
     .returns<CategoryRow>();
 
@@ -82,13 +103,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
   }
   if (!data) return null;
 
-  return {
-    id: data.id,
-    name: data.name,
-    slug: data.slug,
-    imageUrl: data.image_url,
-    sortOrder: data.sort_order,
-  };
+  return mapCategory(data);
 }
 
 export async function getProductsByCategory(params: {
@@ -282,32 +297,41 @@ export async function getBrands(): Promise<Brand[]> {
 
 type SubcategoryRow = Pick<
   Database["public"]["Tables"]["subcategories"]["Row"],
-  "id" | "category_id" | "name" | "slug"
+  "id" | "category_id" | "name" | "slug" | "description" | "image_url" | "icon" | "sort_order" | "is_active" | "is_visible"
 >;
 
-export interface Subcategory {
-  id: string;
-  categoryId: string;
-  name: string;
-  slug: string;
+function mapSubcategory(row: SubcategoryRow): Subcategory {
+  return {
+    id: row.id,
+    categoryId: row.category_id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    imageUrl: row.image_url,
+    icon: row.icon,
+    sortOrder: row.sort_order,
+    isActive: row.is_active,
+    isVisible: row.is_visible,
+  };
 }
 
-export async function getAllSubcategories(): Promise<Subcategory[]> {
+const SUBCATEGORY_SELECT =
+  "id, category_id, name, slug, description, image_url, icon, sort_order, is_active, is_visible";
+
+export async function listSubcategories(categoryId: string): Promise<Subcategory[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("subcategories")
-    .select("id, category_id, name, slug")
-    .order("name", { ascending: true })
+    .select(SUBCATEGORY_SELECT)
+    .eq("category_id", categoryId)
+    .eq("is_active", true)
+    .eq("is_visible", true)
+    .order("sort_order", { ascending: true })
     .returns<SubcategoryRow[]>();
 
   if (error) {
     throw new Error(`Impossible de charger les sous-catégories : ${error.message}`);
   }
 
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    categoryId: row.category_id,
-    name: row.name,
-    slug: row.slug,
-  }));
+  return (data ?? []).map(mapSubcategory);
 }

@@ -65,7 +65,7 @@ export async function getProductForEdit(id: string): Promise<AdminProductDetail 
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, name, slug, sku, condition, description, brand_id, category_id, subcategory_id, price, compare_at_price, cost_price, stock_quantity, low_stock_threshold, fulfillment_type, cod_available, store_pickup_available, status"
+      "id, name, slug, sku, condition, description, brand_id, category_id, subcategory_id, price, compare_at_price, cost_price, stock_quantity, low_stock_threshold, fulfillment_type, cod_available, store_pickup_available, status, is_featured, is_new, is_best_seller, is_flash_deal, is_on_sale"
     )
     .eq("id", id)
     .maybeSingle();
@@ -95,6 +95,11 @@ export async function getProductForEdit(id: string): Promise<AdminProductDetail 
     codAvailable: r.cod_available as boolean,
     storePickupAvailable: r.store_pickup_available as boolean,
     status: r.status as ProductInput["status"],
+    isFeatured: Boolean(r.is_featured),
+    isNew: Boolean(r.is_new),
+    isBestSeller: Boolean(r.is_best_seller),
+    isFlashDeal: Boolean(r.is_flash_deal),
+    isOnSale: Boolean(r.is_on_sale),
     imageUrl: "",
   };
 }
@@ -127,6 +132,11 @@ function toRow(input: ProductInput) {
     cod_available: input.codAvailable,
     store_pickup_available: input.storePickupAvailable,
     status: input.status,
+    is_featured: input.isFeatured,
+    is_new: input.isNew,
+    is_best_seller: input.isBestSeller,
+    is_flash_deal: input.isFlashDeal,
+    is_on_sale: input.isOnSale,
   };
 }
 

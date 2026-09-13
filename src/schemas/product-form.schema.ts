@@ -28,6 +28,11 @@ export const productFormSchema = z
     codAvailable: z.boolean().default(true),
     storePickupAvailable: z.boolean().default(false),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
+    isFeatured: z.boolean().default(false),
+    isNew: z.boolean().default(false),
+    isBestSeller: z.boolean().default(false),
+    isFlashDeal: z.boolean().default(false),
+    isOnSale: z.boolean().default(false),
   })
   .refine((data) => !data.promoPrice || data.promoPrice < data.realPrice, {
     message: "Le prix promo doit être inférieur au prix réel.",
@@ -62,6 +67,11 @@ export function toProductInput(form: ProductFormInput): ProductInput {
     codAvailable: form.codAvailable,
     storePickupAvailable: form.storePickupAvailable,
     status: form.status,
+    isFeatured: form.isFeatured,
+    isNew: form.isNew,
+    isBestSeller: form.isBestSeller,
+    isFlashDeal: form.isFlashDeal,
+    isOnSale: form.isOnSale,
     imageUrl: "",
   };
 }
@@ -94,5 +104,10 @@ export function fromProductInput(
     codAvailable: product.codAvailable,
     storePickupAvailable: product.storePickupAvailable,
     status: product.status,
+    isFeatured: product.isFeatured,
+    isNew: product.isNew,
+    isBestSeller: product.isBestSeller,
+    isFlashDeal: product.isFlashDeal,
+    isOnSale: product.isOnSale,
   };
 }

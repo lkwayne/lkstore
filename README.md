@@ -101,15 +101,50 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Ce qui n'est pas encore implémenté
 
+- Mega-menu de navigation (catégories → sous-catégories) dans le header —
+  la nav principale reste simple pour l'instant ; `/categories` montre la
+  hiérarchie complète.
+- Pages dynamiques "Offres & Promotions" (Flash Deals, Nouveautés,
+  Meilleures ventes en tant que pages navigables) — les flags produit qui
+  les alimenteront existent déjà (`is_flash_deal`, `is_new`,
+  `is_best_seller`, `is_on_sale`, `is_featured`), mais aucune page ne les
+  affiche encore.
+- Filtres catalogue avancés côté boutique (marque, fourchette de prix,
+  disponibilité) sur `/categories/[slug]`.
+- Sous-sous-catégories (3ᵉ niveau) — non nécessaire à ce stade, le modèle à
+  deux niveaux (catégorie → sous-catégorie) couvre la taxonomie actuelle.
+- Réordonnancement par glisser-déposer dans l'admin catégories (l'ordre se
+  modifie pour l'instant via le champ numérique).
 - Promotions/coupons (table existante, aucune interface).
-- Filtres catalogue avancés côté boutique (marque, fourchette de prix).
 - Lien automatique entre une commande et le compte client connecté au
   moment du checkout (le checkout reste en mode invité pour l'instant).
-- Upload d'image (le formulaire produit accepte une URL d'image publique,
-  pas encore un vrai upload vers Supabase Storage).
 - Réinitialisation de mot de passe, connexion via réseaux sociaux.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
+
+## Catégories & Taxonomie (livré)
+
+- Taxonomie réelle : **13 catégories, 100 sous-catégories** (téléphones,
+  informatique, maison, mode, beauté, bébé, sport, auto/moto, énergie
+  solaire, sécurité, gaming, bricolage, + une catégorie vitrine "Offres &
+  Promotions" sans sous-catégorie physique). Chargée via les migrations
+  `0008_category_hierarchy.sql` (colonnes) et
+  `0009_category_taxonomy.sql` (données, idempotente via `ON CONFLICT`).
+- `/admin/categories` — liste avec compteurs (sous-catégories, produits),
+  création, édition. Chaque catégorie gère ses propres sous-catégories
+  directement sur sa page d'édition (ajout, retrait).
+- Actif/visible distincts : une catégorie peut être désactivée (masquée
+  partout, y compris de l'admin produit) ou juste retirée de la boutique
+  publique tout en restant sélectionnable en interne.
+- Suppression bloquée si la catégorie/sous-catégorie contient encore des
+  produits — évite de casser des fiches produit existantes par erreur.
+- Sécurité : lecture publique limitée aux catégories actives ET visibles
+  (`categories_public_read` / `subcategories_public_read`), écriture
+  réservée au staff (`categories_staff_write` / `subcategories_staff_write`).
+- Flags marketing produit (`is_featured`, `is_new`, `is_best_seller`,
+  `is_flash_deal`, `is_on_sale`) ajoutés au modèle produit et au formulaire
+  admin — prêts à alimenter de futures collections dynamiques sans dupliquer
+  les produits dans de fausses catégories.
 
 ## Module Fournisseurs & Dropshipping (livré)
 
@@ -170,6 +205,9 @@ Deux failles de contrôle d'accès corrigées (`0005_security_hardening.sql`) :
   (`toProductInput`/`fromProductInput`). En base, `products.price` reste
   toujours le montant facturé et `products.compare_at_price` la référence
   barrée, inchangé pour le reste de l'application (panier, checkout).
+- **Mise en avant marketing** : 5 cases à cocher (Mis en avant, Nouveauté,
+  Meilleure vente, Flash Deal, En promotion) — voir section "Catégories &
+  Taxonomie" pour le détail des flags associés.
 - Réservé au staff via le même layout `/admin` que le module commandes ;
   la sécurité réelle vient des policies RLS `products_staff_write` /
   `products_public_read` (un compte non-staff ne verrait jamais les

@@ -17,8 +17,12 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
+  description: string | null;
   imageUrl: string | null;
+  icon: string | null;
   sortOrder: number;
+  isActive: boolean;
+  isVisible: boolean;
 }
 
 export interface Subcategory {
@@ -26,7 +30,12 @@ export interface Subcategory {
   categoryId: string;
   name: string;
   slug: string;
+  description: string | null;
+  imageUrl: string | null;
+  icon: string | null;
   sortOrder: number;
+  isActive: boolean;
+  isVisible: boolean;
 }
 
 export interface ProductImage {
@@ -52,6 +61,11 @@ export interface ProductSummary {
   primaryImageUrl: string | null;
   averageRating: number | null;
   reviewCount: number;
+  isFeatured: boolean;
+  isNew: boolean;
+  isBestSeller: boolean;
+  isFlashDeal: boolean;
+  isOnSale: boolean;
 }
 
 export interface ProductDetail extends ProductSummary {

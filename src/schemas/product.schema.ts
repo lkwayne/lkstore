@@ -20,6 +20,11 @@ export const productSchema = z
     codAvailable: z.boolean().default(true),
     storePickupAvailable: z.boolean().default(false),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
+    isFeatured: z.boolean().default(false),
+    isNew: z.boolean().default(false),
+    isBestSeller: z.boolean().default(false),
+    isFlashDeal: z.boolean().default(false),
+    isOnSale: z.boolean().default(false),
     imageUrl: z
       .string()
       .url("URL d'image invalide")

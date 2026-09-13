@@ -29,8 +29,12 @@ export interface Database {
           id: string;
           name: string;
           slug: string;
+          description: string | null;
           image_url: string | null;
+          icon: string | null;
           sort_order: number;
+          is_active: boolean;
+          is_visible: boolean;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["categories"]["Row"]> & {
@@ -45,7 +49,12 @@ export interface Database {
           category_id: string;
           name: string;
           slug: string;
+          description: string | null;
+          image_url: string | null;
+          icon: string | null;
           sort_order: number;
+          is_active: boolean;
+          is_visible: boolean;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["subcategories"]["Row"]> & {
@@ -89,6 +98,11 @@ export interface Database {
           store_pickup_available: boolean;
           status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
           condition: "NEUF" | "OCCASION";
+          is_featured: boolean;
+          is_new: boolean;
+          is_best_seller: boolean;
+          is_flash_deal: boolean;
+          is_on_sale: boolean;
           seo_title: string | null;
           seo_description: string | null;
           created_at: string;

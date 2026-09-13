@@ -20,6 +20,11 @@ const baseForm: ProductFormInput = {
   codAvailable: true,
   storePickupAvailable: false,
   status: "PUBLISHED",
+  isFeatured: false,
+  isNew: false,
+  isBestSeller: false,
+  isFlashDeal: false,
+  isOnSale: false,
 };
 
 describe("toProductInput", () => {
@@ -66,6 +71,11 @@ describe("fromProductInput", () => {
     codAvailable: true,
     storePickupAvailable: false,
     status: "PUBLISHED",
+    isFeatured: false,
+    isNew: false,
+    isBestSeller: false,
+    isFlashDeal: false,
+    isOnSale: false,
     imageUrl: "",
   };
 

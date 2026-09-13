@@ -327,6 +327,39 @@ export function ProductForm({
         </Field>
       </fieldset>
 
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-semibold text-brand-navy">
+          Mise en avant sur la boutique
+        </legend>
+        <p className="text-xs text-neutral-400">
+          Alimente automatiquement les collections « Offres & Promotions »
+          (Flash Deals, Nouveautés, Meilleures ventes) sans dupliquer le
+          produit dans une fausse catégorie.
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <label className="flex items-center gap-2 text-sm text-neutral-600">
+            <input type="checkbox" {...register("isFeatured")} className="h-4 w-4" />
+            Mis en avant
+          </label>
+          <label className="flex items-center gap-2 text-sm text-neutral-600">
+            <input type="checkbox" {...register("isNew")} className="h-4 w-4" />
+            Nouveauté
+          </label>
+          <label className="flex items-center gap-2 text-sm text-neutral-600">
+            <input type="checkbox" {...register("isBestSeller")} className="h-4 w-4" />
+            Meilleure vente
+          </label>
+          <label className="flex items-center gap-2 text-sm text-neutral-600">
+            <input type="checkbox" {...register("isFlashDeal")} className="h-4 w-4" />
+            Flash Deal
+          </label>
+          <label className="flex items-center gap-2 text-sm text-neutral-600">
+            <input type="checkbox" {...register("isOnSale")} className="h-4 w-4" />
+            En promotion
+          </label>
+        </div>
+      </fieldset>
+
       {serverError ? (
         <p className="rounded-lg bg-brand-red/10 px-4 py-3 text-sm text-brand-red">{serverError}</p>
       ) : null}
