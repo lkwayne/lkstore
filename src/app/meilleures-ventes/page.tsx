@@ -1,18 +1,22 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { ComingSoonSection } from "@/components/ComingSoonSection";
+import { FlagProductsPage } from "@/components/FlagProductsPage";
 
-export default function MeilleuresVentesPage() {
+export const dynamic = "force-dynamic";
+
+export const metadata = { title: "Meilleures ventes — SENDUU" };
+
+export default async function MeilleuresVentesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; sort?: string }>;
+}) {
   return (
-    <>
-      <Header />
-      <main className="flex-1">
-        <ComingSoonSection
-          title="Meilleures ventes"
-          description="Le classement des produits les plus vendus arrive avec le catalogue."
-        />
-      </main>
-      <Footer />
-    </>
+    <FlagProductsPage
+      flag="is_best_seller"
+      basePath="/meilleures-ventes"
+      title="Meilleures ventes"
+      subtitle="Ce que les clients SENDUU préfèrent."
+      emptyMessage="Aucune meilleure vente mise en avant pour le moment."
+      searchParams={await searchParams}
+    />
   );
 }

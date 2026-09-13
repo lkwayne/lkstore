@@ -135,9 +135,9 @@ export default function CheckoutPage() {
               Total : <strong className="text-brand-navy">{formatPrice(orderResult.total)}</strong>
             </p>
             <p className="mt-6 text-xs text-neutral-400">
-              Conservez ce numéro — le suivi de commande par numéro arrive
-              avec le module Authentification. Notre équipe vous contactera
-              au numéro fourni pour confirmer la suite.
+              Conservez ce numéro. Si vous étiez connecté, retrouvez cette
+              commande dans « Mon compte → Mes commandes ». Notre équipe
+              vous contactera au numéro fourni pour confirmer la suite.
             </p>
             <Link
               href="/categories"

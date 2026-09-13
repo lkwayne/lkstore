@@ -63,19 +63,21 @@ export default async function AccountPage() {
             </p>
           </div>
 
+          <Link
+            href="/account/orders"
+            className="mt-4 flex w-full items-center justify-center rounded-full border border-neutral-200 px-6 py-3 text-sm font-semibold text-brand-navy"
+          >
+            Mes commandes
+          </Link>
+
           {staff ? (
             <Link
               href="/admin"
-              className="bg-brand-gradient mt-4 flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white"
+              className="bg-brand-gradient mt-3 flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white"
             >
               Accéder au tableau de bord commandes
             </Link>
-          ) : (
-            <p className="mt-4 text-xs text-neutral-400">
-              L&rsquo;historique de vos commandes sera bientôt consultable
-              ici.
-            </p>
-          )}
+          ) : null}
 
           <div className="mt-6">
             <SignOutButton />

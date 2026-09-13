@@ -149,6 +149,61 @@ export async function getProductsByCategory(params: {
   };
 }
 
+export type ProductFlag =
+  | "is_featured"
+  | "is_new"
+  | "is_best_seller"
+  | "is_flash_deal"
+  | "is_on_sale";
+
+/**
+ * Liste les produits publiés portant un flag marketing donné (Flash Deals,
+ * Nouveautés, Meilleures ventes...). Ne duplique aucun produit dans une
+ * fausse catégorie — c'est une simple lecture filtrée par colonne booléenne.
+ */
+export async function getProductsByFlag(params: {
+  flag: ProductFlag;
+  page?: number;
+  pageSize?: number;
+  sort?: ProductSort;
+}): Promise<PaginatedResult<ProductSummary>> {
+  const page = params.page ?? 1;
+  const pageSize = params.pageSize ?? DEFAULT_PAGE_SIZE;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  const sort = params.sort ?? "relevance";
+
+  const supabase = await createClient();
+  const baseQuery = supabase
+    .from("products")
+    .select(PRODUCT_SUMMARY_SELECT, { count: "exact" })
+    .eq("status", "PUBLISHED")
+    .eq(params.flag, true);
+
+  const sortedQuery =
+    sort === "price_asc"
+      ? baseQuery.order("price", { ascending: true })
+      : sort === "price_desc"
+        ? baseQuery.order("price", { ascending: false })
+        : baseQuery.order("created_at", { ascending: false });
+
+  const { data, error, count } = await sortedQuery.range(from, to);
+
+  if (error) {
+    throw new Error(`Impossible de charger les produits : ${error.message}`);
+  }
+
+  const totalCount = count ?? 0;
+
+  return {
+    items: (data ?? []).map((row) => mapProductSummary(row as unknown as Record<string, unknown>)),
+    page,
+    pageSize,
+    totalCount,
+    totalPages: Math.max(1, Math.ceil(totalCount / pageSize)),
+  };
+}
+
 export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
   const supabase = await createClient();
   const { data, error } = await supabase

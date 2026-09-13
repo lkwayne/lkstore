@@ -1,18 +1,22 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { ComingSoonSection } from "@/components/ComingSoonSection";
+import { FlagProductsPage } from "@/components/FlagProductsPage";
 
-export default function PromotionsPage() {
+export const dynamic = "force-dynamic";
+
+export const metadata = { title: "Promotions — SENDUU" };
+
+export default async function PromotionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; sort?: string }>;
+}) {
   return (
-    <>
-      <Header />
-      <main className="flex-1">
-        <ComingSoonSection
-          title="Promotions"
-          description="Les ventes flash et réductions SENDUU seront bientôt visibles ici."
-        />
-      </main>
-      <Footer />
-    </>
+    <FlagProductsPage
+      flag="is_on_sale"
+      basePath="/promotions"
+      title="Promotions"
+      subtitle="Les meilleures réductions du moment."
+      emptyMessage="Aucune promotion en cours pour le moment — revenez bientôt."
+      searchParams={await searchParams}
+    />
   );
 }

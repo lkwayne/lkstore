@@ -1,18 +1,22 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { ComingSoonSection } from "@/components/ComingSoonSection";
+import { FlagProductsPage } from "@/components/FlagProductsPage";
 
-export default function NouveautesPage() {
+export const dynamic = "force-dynamic";
+
+export const metadata = { title: "Nouveautés — SENDUU" };
+
+export default async function NouveautesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; sort?: string }>;
+}) {
   return (
-    <>
-      <Header />
-      <main className="flex-1">
-        <ComingSoonSection
-          title="Nouveautés"
-          description="Les derniers produits ajoutés au catalogue s'afficheront ici."
-        />
-      </main>
-      <Footer />
-    </>
+    <FlagProductsPage
+      flag="is_new"
+      basePath="/nouveautes"
+      title="Nouveautés"
+      subtitle="Les derniers produits arrivés sur SENDUU."
+      emptyMessage="Aucune nouveauté mise en avant pour le moment."
+      searchParams={await searchParams}
+    />
   );
 }

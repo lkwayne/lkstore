@@ -104,20 +104,14 @@ npm run test     # Tests unitaires (Vitest)
 - Mega-menu de navigation (catégories → sous-catégories) dans le header —
   la nav principale reste simple pour l'instant ; `/categories` montre la
   hiérarchie complète.
-- Pages dynamiques "Offres & Promotions" (Flash Deals, Nouveautés,
-  Meilleures ventes en tant que pages navigables) — les flags produit qui
-  les alimenteront existent déjà (`is_flash_deal`, `is_new`,
-  `is_best_seller`, `is_on_sale`, `is_featured`), mais aucune page ne les
-  affiche encore.
 - Filtres catalogue avancés côté boutique (marque, fourchette de prix,
-  disponibilité) sur `/categories/[slug]`.
+  disponibilité) sur `/categories/[slug]` et les pages Flash Deals/Promo.
 - Sous-sous-catégories (3ᵉ niveau) — non nécessaire à ce stade, le modèle à
   deux niveaux (catégorie → sous-catégorie) couvre la taxonomie actuelle.
 - Réordonnancement par glisser-déposer dans l'admin catégories (l'ordre se
   modifie pour l'instant via le champ numérique).
-- Promotions/coupons (table existante, aucune interface).
-- Lien automatique entre une commande et le compte client connecté au
-  moment du checkout (le checkout reste en mode invité pour l'instant).
+- Promotions/coupons avec code de réduction (table existante, aucune
+  interface) — distinct du flag `is_on_sale` déjà exploité par `/promotions`.
 - Réinitialisation de mot de passe, connexion via réseaux sociaux.
 - Notifications WhatsApp/email.
 - Tests E2E Playwright.
@@ -143,8 +137,21 @@ npm run test     # Tests unitaires (Vitest)
   réservée au staff (`categories_staff_write` / `subcategories_staff_write`).
 - Flags marketing produit (`is_featured`, `is_new`, `is_best_seller`,
   `is_flash_deal`, `is_on_sale`) ajoutés au modèle produit et au formulaire
-  admin — prêts à alimenter de futures collections dynamiques sans dupliquer
-  les produits dans de fausses catégories.
+  admin ; **exploités par `/promotions` (is_on_sale), `/nouveautes`
+  (is_new) et `/meilleures-ventes` (is_best_seller)** — vraies pages
+  catalogue triables/paginées, pas des fausses catégories dupliquées.
+  `is_featured` et `is_flash_deal` restent disponibles pour une future mise
+  en avant homepage.
+
+## Historique des commandes client (livré)
+
+- `/account/orders` — un client connecté voit toutes ses commandes passées
+  (numéro, date, statut, mode de réception, total). Repose entièrement sur
+  la policy RLS déjà existante `orders_owner_or_staff_select`
+  (`customer_id = auth.uid()`) — aucune nouvelle règle de sécurité requise.
+- La liaison commande ↔ compte client existait déjà côté `create_order()`
+  (`auth.uid()` capturé à la création) mais restait invisible faute de
+  page ; c'est maintenant corrigé.
 
 ## Module Fournisseurs & Dropshipping (livré)
 

@@ -82,3 +82,46 @@ export async function createOrder(
     total: Number(row.total),
   };
 }
+
+export interface CustomerOrderItem {
+  id: string;
+  orderNumber: string;
+  status: string;
+  paymentStatus: string;
+  receptionMethod: string;
+  total: number;
+  createdAt: string;
+  itemCount: number;
+}
+
+/**
+ * Retourne les commandes du client actuellement connecté. S'appuie
+ * entièrement sur la policy RLS `orders_owner_or_staff_select`
+ * (`customer_id = auth.uid()`) — si personne n'est connecté, Supabase ne
+ * retournera aucune ligne plutôt que de lever une erreur.
+ */
+export async function getOrdersForCustomer(): Promise<CustomerOrderItem[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("id, order_number, status, payment_status, reception_method, total, created_at, order_items(id)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Impossible de charger vos commandes : ${error.message}`);
+  }
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return {
+      id: r.id as string,
+      orderNumber: r.order_number as string,
+      status: r.status as string,
+      paymentStatus: r.payment_status as string,
+      receptionMethod: r.reception_method as string,
+      total: Number(r.total),
+      createdAt: r.created_at as string,
+      itemCount: Array.isArray(r.order_items) ? r.order_items.length : 0,
+    };
+  });
+}
