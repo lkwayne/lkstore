@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MAIN_NAV } from "@/config/brand";
 import { useCart } from "@/components/CartProvider";
 
@@ -83,6 +83,15 @@ function SearchForm({ id, className }: { id: string; className?: string }) {
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
   const { itemCount } = useCart();
 
   return (
@@ -161,8 +170,11 @@ export function Header() {
 
       {/* Menu mobile plein écran */}
       {mobileMenuOpen ? (
-        <div className="fixed inset-0 z-50 bg-white md:hidden">
-          <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
+        <div
+          className="fixed inset-0 z-[999] overflow-y-auto bg-white md:hidden"
+          style={{ backgroundColor: "#ffffff" }}
+        >
+          <div className="flex items-center justify-between border-b border-neutral-100 bg-white px-4 py-3">
             <Image src="/brand/senduu-logo-header.png" alt="SENDUU" width={120} height={80} className="h-8 w-auto" />
             <button
               type="button"
@@ -173,7 +185,7 @@ export function Header() {
               <CloseIcon className="h-6 w-6" />
             </button>
           </div>
-          <ul className="flex flex-col divide-y divide-neutral-100 text-base font-medium text-brand-navy">
+          <ul className="flex flex-col divide-y divide-neutral-100 bg-white text-base font-medium text-brand-navy">
             {MAIN_NAV.map((item) => (
               <li key={item.href}>
                 <Link
