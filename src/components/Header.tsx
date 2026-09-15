@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { MAIN_NAV } from "@/config/brand";
 import { useCart } from "@/components/CartProvider";
 
@@ -83,6 +84,16 @@ function SearchForm({ id, className }: { id: string; className?: string }) {
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Détection du montage client, nécessaire pour ne rendre le portail
+    // (createPortal vers document.body) qu'une fois côté navigateur — évite
+    // un mismatch d'hydratation SSR/client. Pattern recommandé par React
+    // pour ce cas précis, comme dans CartProvider.tsx.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -94,7 +105,7 @@ export function Header() {
   }, [mobileMenuOpen]);
   const { itemCount } = useCart();
 
-  return (
+  const headerElement = (
     <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 backdrop-blur">
       {/* Ligne principale */}
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
@@ -167,49 +178,55 @@ export function Header() {
           ))}
         </ul>
       </nav>
-
-      {/* Menu mobile plein écran */}
-      {mobileMenuOpen ? (
-        <div
-          className="fixed inset-0 z-[999] overflow-y-auto bg-white md:hidden"
-          style={{ backgroundColor: "#ffffff" }}
-        >
-          <div className="flex items-center justify-between border-b border-neutral-100 bg-white px-4 py-3">
-            <Image src="/brand/senduu-logo-header.png" alt="SENDUU" width={120} height={80} className="h-8 w-auto" />
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy"
-              aria-label="Fermer le menu"
-            >
-              <CloseIcon className="h-6 w-6" />
-            </button>
-          </div>
-          <ul className="flex flex-col divide-y divide-neutral-100 bg-white text-base font-medium text-brand-navy">
-            {MAIN_NAV.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-6 py-4"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link href="/account" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-4">
-                Mon compte
-              </Link>
-            </li>
-            <li>
-              <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-4">
-                Mes favoris
-              </Link>
-            </li>
-          </ul>
-        </div>
-      ) : null}
     </header>
+  );
+
+  const mobileMenu = mobileMenuOpen ? (
+    <div
+      className="fixed inset-0 z-[999] overflow-y-auto bg-white md:hidden"
+      style={{ backgroundColor: "#ffffff" }}
+    >
+      <div className="flex items-center justify-between border-b border-neutral-100 bg-white px-4 py-3">
+        <Image src="/brand/senduu-logo-header.png" alt="SENDUU" width={120} height={80} className="h-8 w-auto" />
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(false)}
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy"
+          aria-label="Fermer le menu"
+        >
+          <CloseIcon className="h-6 w-6" />
+        </button>
+      </div>
+      <ul className="flex flex-col divide-y divide-neutral-100 bg-white text-base font-medium text-brand-navy">
+        {MAIN_NAV.map((item) => (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-6 py-4"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+        <li>
+          <Link href="/account" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-4">
+            Mon compte
+          </Link>
+        </li>
+        <li>
+          <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)} className="block px-6 py-4">
+            Mes favoris
+          </Link>
+        </li>
+      </ul>
+    </div>
+  ) : null;
+
+  return (
+    <>
+      {headerElement}
+      {mounted && mobileMenu ? createPortal(mobileMenu, document.body) : null}
+    </>
   );
 }
