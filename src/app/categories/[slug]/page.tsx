@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";
-import { getCategoryBySlug, getProductsByCategory } from "@/services/catalog.service";
+import { getCategoryBySlug, getProductsByCategory, listSubcategories } from "@/services/catalog.service";
 import type { ProductSort } from "@/types/catalog";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,7 @@ export default async function CategoryDetailPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string; sort?: string }>;
+  searchParams: Promise<{ page?: string; sort?: string; "sous-categorie"?: string }>;
 }) {
   const { slug } = await params;
   const resolvedSearchParams = await searchParams;
@@ -46,17 +46,24 @@ export default async function CategoryDetailPage({
   const category = await getCategoryBySlug(slug);
   if (!category) notFound();
 
+  const subcategories = await listSubcategories(category.id);
+  const activeSubcategorySlug = resolvedSearchParams["sous-categorie"];
+  const activeSubcategory = subcategories.find((s) => s.slug === activeSubcategorySlug);
+
   const page = Math.max(1, Number(resolvedSearchParams.page) || 1);
   const sort = isProductSort(resolvedSearchParams.sort) ? resolvedSearchParams.sort : "relevance";
 
   const result = await getProductsByCategory({
     categoryId: category.id,
+    subcategoryId: activeSubcategory?.id,
     page,
     sort,
   });
 
   const buildHref = (targetPage: number) =>
-    `/categories/${slug}?page=${targetPage}${sort !== "relevance" ? `&sort=${sort}` : ""}`;
+    `/categories/${slug}?page=${targetPage}${sort !== "relevance" ? `&sort=${sort}` : ""}${
+      activeSubcategory ? `&sous-categorie=${activeSubcategory.slug}` : ""
+    }`;
 
   return (
     <>
@@ -74,6 +81,9 @@ export default async function CategoryDetailPage({
             </div>
 
             <form method="GET" className="flex items-center gap-2">
+              {activeSubcategory ? (
+                <input type="hidden" name="sous-categorie" value={activeSubcategory.slug} />
+              ) : null}
               <label htmlFor="sort" className="text-sm text-neutral-500">
                 Trier par
               </label>
@@ -91,6 +101,35 @@ export default async function CategoryDetailPage({
               </select>
             </form>
           </div>
+
+          {subcategories.length > 0 ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={`/categories/${slug}${sort !== "relevance" ? `?sort=${sort}` : ""}`}
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  !activeSubcategory
+                    ? "border-brand-orange bg-brand-surface text-brand-navy"
+                    : "border-neutral-200 text-neutral-500 hover:border-brand-orange"
+                }`}
+              >
+                Tout
+              </a>
+              {subcategories.map((sub) => (
+                <a
+                  key={sub.id}
+                  href={`/categories/${slug}?sous-categorie=${sub.slug}${sort !== "relevance" ? `&sort=${sort}` : ""}`}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    activeSubcategory?.id === sub.id
+                      ? "border-brand-orange bg-brand-surface text-brand-navy"
+                      : "border-neutral-200 text-neutral-500 hover:border-brand-orange"
+                  }`}
+                >
+                  {sub.icon ? <span aria-hidden>{sub.icon}</span> : null}
+                  {sub.name}
+                </a>
+              ))}
+            </div>
+          ) : null}
 
           {result.items.length === 0 ? (
             <p className="mt-10 text-sm text-neutral-500">

@@ -73,6 +73,7 @@ export function SubcategoriesSection({
             <li key={s.id} className="flex items-center justify-between px-4 py-3 text-sm">
               <div>
                 <p className="font-medium text-brand-navy">
+                  {s.icon ? <span className="mr-1.5" aria-hidden>{s.icon}</span> : null}
                   {s.name}
                   {!s.isActive || !s.isVisible ? (
                     <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-500">
@@ -118,6 +119,11 @@ export function SubcategoriesSection({
             className="rounded-lg border border-neutral-200 px-3 py-2 text-sm"
           />
         </div>
+        <input
+          {...register("icon")}
+          placeholder="Icône (emoji, ex : 📱)"
+          className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
+        />
         {errors.name ? <p className="text-xs text-brand-red">{errors.name.message}</p> : null}
         {errors.slug ? <p className="text-xs text-brand-red">{errors.slug.message}</p> : null}
         {error ? <p className="text-xs text-brand-red">{error}</p> : null}

@@ -51,6 +51,10 @@ export default async function HomePage() {
                         sizes="64px"
                         className="object-cover"
                       />
+                    ) : category.icon ? (
+                      <span className="text-2xl" aria-hidden>
+                        {category.icon}
+                      </span>
                     ) : (
                       <span className="text-lg font-bold text-brand-navy">
                         {category.name.charAt(0)}

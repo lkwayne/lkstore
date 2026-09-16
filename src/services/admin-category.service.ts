@@ -5,6 +5,7 @@ export interface AdminCategoryListItem {
   id: string;
   name: string;
   slug: string;
+  icon: string | null;
   sortOrder: number;
   isActive: boolean;
   isVisible: boolean;
@@ -33,7 +34,7 @@ export async function listCategoriesForAdmin(): Promise<AdminCategoryListItem[]>
   const { data, error } = await supabase
     .from("categories")
     .select(
-      "id, name, slug, sort_order, is_active, is_visible, subcategories(id), products(id)"
+      "id, name, slug, icon, sort_order, is_active, is_visible, subcategories(id), products(id)"
     )
     .order("sort_order");
 
@@ -47,6 +48,7 @@ export async function listCategoriesForAdmin(): Promise<AdminCategoryListItem[]>
       id: r.id as string,
       name: r.name as string,
       slug: r.slug as string,
+      icon: r.icon as string | null,
       sortOrder: r.sort_order as number,
       isActive: r.is_active as boolean,
       isVisible: r.is_visible as boolean,

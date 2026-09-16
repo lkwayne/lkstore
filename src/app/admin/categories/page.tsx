@@ -41,7 +41,10 @@ export default async function AdminCategoriesPage() {
               {categories.map((c) => (
                 <tr key={c.id}>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-brand-navy">{c.name}</p>
+                    <p className="font-medium text-brand-navy">
+                      {c.icon ? <span className="mr-1.5" aria-hidden>{c.icon}</span> : null}
+                      {c.name}
+                    </p>
                     <p className="text-xs text-neutral-400">/{c.slug}</p>
                   </td>
                   <td className="px-4 py-3 text-neutral-500">{c.subcategoryCount}</td>

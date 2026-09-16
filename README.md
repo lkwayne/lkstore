@@ -118,12 +118,25 @@ npm run test     # Tests unitaires (Vitest)
 
 ## Catégories & Taxonomie (livré)
 
-- Taxonomie réelle : **13 catégories, 100 sous-catégories** (téléphones,
+- Taxonomie réelle : **13 catégories, 99 sous-catégories** (téléphones,
   informatique, maison, mode, beauté, bébé, sport, auto/moto, énergie
   solaire, sécurité, gaming, bricolage, + une catégorie vitrine "Offres &
   Promotions" sans sous-catégorie physique). Chargée via les migrations
   `0008_category_hierarchy.sql` (colonnes) et
   `0009_category_taxonomy.sql` (données, idempotente via `ON CONFLICT`).
+- **Icône dédiée pour chaque catégorie et sous-catégorie** (emoji, colonne
+  `icon`), attribuée via `0010_category_icons.sql`. Priorité d'affichage :
+  vraie photo (`image_url`) si définie, sinon icône, sinon initiale du nom
+  en dernier recours — sur la homepage, `/categories` et l'admin. Le
+  formulaire d'ajout rapide de sous-catégorie et la fiche catégorie admin
+  permettent de définir/changer l'icône ou d'y substituer une vraie image
+  à tout moment.
+- `/categories` liste désormais chaque catégorie **avec ses
+  sous-catégories** (icône + nom, cliquables) plutôt qu'une simple grille
+  plate.
+- `/categories/[slug]` accepte un filtre réel par sous-catégorie
+  (`?sous-categorie=slug`, cliquable depuis les puces affichées en haut de
+  page) — pas juste décoratif, ça filtre vraiment les produits affichés.
 - `/admin/categories` — liste avec compteurs (sous-catégories, produits),
   création, édition. Chaque catégorie gère ses propres sous-catégories
   directement sur sa page d'édition (ajout, retrait).

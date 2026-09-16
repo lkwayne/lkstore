@@ -108,6 +108,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 
 export async function getProductsByCategory(params: {
   categoryId: string;
+  subcategoryId?: string;
   page?: number;
   pageSize?: number;
   sort?: ProductSort;
@@ -119,11 +120,15 @@ export async function getProductsByCategory(params: {
   const sort = params.sort ?? "relevance";
 
   const supabase = await createClient();
-  const baseQuery = supabase
+  let baseQuery = supabase
     .from("products")
     .select(PRODUCT_SUMMARY_SELECT, { count: "exact" })
     .eq("status", "PUBLISHED")
     .eq("category_id", params.categoryId);
+
+  if (params.subcategoryId) {
+    baseQuery = baseQuery.eq("subcategory_id", params.subcategoryId);
+  }
 
   const sortedQuery =
     sort === "price_asc"
