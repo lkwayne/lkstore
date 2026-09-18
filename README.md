@@ -104,8 +104,9 @@ npm run test     # Tests unitaires (Vitest)
 - Mega-menu de navigation (catégories → sous-catégories) dans le header —
   la nav principale reste simple pour l'instant ; `/categories` montre la
   hiérarchie complète.
-- Filtres catalogue avancés côté boutique (marque, fourchette de prix,
-  disponibilité) sur `/categories/[slug]` et les pages Flash Deals/Promo.
+- Filtres prix/marque sur les pages Promotions/Nouveautés/Meilleures ventes
+  (déjà en place sur `/categories/[slug]`, pas encore répliqués là).
+- Filtre disponibilité (en stock uniquement) — pas encore ajouté.
 - Sous-sous-catégories (3ᵉ niveau) — non nécessaire à ce stade, le modèle à
   deux niveaux (catégorie → sous-catégorie) couvre la taxonomie actuelle.
 - Réordonnancement par glisser-déposer dans l'admin catégories (l'ordre se
@@ -137,6 +138,12 @@ npm run test     # Tests unitaires (Vitest)
 - `/categories/[slug]` accepte un filtre réel par sous-catégorie
   (`?sous-categorie=slug`, cliquable depuis les puces affichées en haut de
   page) — pas juste décoratif, ça filtre vraiment les produits affichés.
+- **Filtres prix (min/max) et marque** sur `/categories/[slug]` — le
+  sélecteur de marque ne propose que les marques ayant au moins un produit
+  publié dans la catégorie (`getBrandsInCategory`), pour ne jamais afficher
+  une option qui ne renverrait aucun résultat. Tous les filtres actifs
+  (sous-catégorie, marque, prix, tri) se préservent entre eux et dans la
+  pagination.
 - `/admin/categories` — liste avec compteurs (sous-catégories, produits),
   création, édition. Chaque catégorie gère ses propres sous-catégories
   directement sur sa page d'édition (ajout, retrait).

@@ -109,6 +109,9 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 export async function getProductsByCategory(params: {
   categoryId: string;
   subcategoryId?: string;
+  brandId?: string;
+  minPrice?: number;
+  maxPrice?: number;
   page?: number;
   pageSize?: number;
   sort?: ProductSort;
@@ -128,6 +131,15 @@ export async function getProductsByCategory(params: {
 
   if (params.subcategoryId) {
     baseQuery = baseQuery.eq("subcategory_id", params.subcategoryId);
+  }
+  if (params.brandId) {
+    baseQuery = baseQuery.eq("brand_id", params.brandId);
+  }
+  if (params.minPrice != null) {
+    baseQuery = baseQuery.gte("price", params.minPrice);
+  }
+  if (params.maxPrice != null) {
+    baseQuery = baseQuery.lte("price", params.maxPrice);
   }
 
   const sortedQuery =
@@ -152,6 +164,45 @@ export async function getProductsByCategory(params: {
     totalCount,
     totalPages: Math.max(1, Math.ceil(totalCount / pageSize)),
   };
+}
+
+/**
+ * Marques ayant au moins un produit publié dans une catégorie donnée —
+ * évite de proposer un filtre marque avec des options qui ne renverraient
+ * jamais aucun résultat.
+ */
+export async function getBrandsInCategory(categoryId: string): Promise<Brand[]> {
+  const supabase = await createClient();
+
+  // Même contournement que pour les autres requêtes complexes de ce
+  // fichier (voir order.service.ts, order-admin.service.ts) — l'inférence
+  // de type de supabase-js échoue sur cette combinaison de filtres à
+  // travers @supabase/ssr ; on type explicitement le résultat.
+  interface BrandFilterQuery {
+    not: (
+      column: "brand_id",
+      operator: "is",
+      value: null
+    ) => Promise<{ data: { brand: Brand | null }[] | null; error: { message: string } | null }>;
+  }
+  const query = supabase
+    .from("products")
+    .select("brand:brands(id, name, slug)")
+    .eq("status", "PUBLISHED")
+    .eq("category_id", categoryId) as unknown as BrandFilterQuery;
+
+  const { data, error } = await query.not("brand_id", "is", null);
+
+  if (error) {
+    throw new Error(`Impossible de charger les marques : ${error.message}`);
+  }
+
+  const seen = new Map<string, Brand>();
+  for (const row of data ?? []) {
+    const brand = row.brand;
+    if (brand && !seen.has(brand.id)) seen.set(brand.id, brand);
+  }
+  return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export type ProductFlag =
