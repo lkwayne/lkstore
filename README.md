@@ -414,3 +414,8 @@ réellement connectée à un service réel avec des identifiants valides.
 - Survol/focus de « Catégories » dans la navigation desktop : panneau avec les 13 catégories et leurs 5 premières sous-catégories (lien « Voir tout »).
 - Mobile : « Catégories » se déplie dans le menu.
 - Données via `getMegaMenu()` (client Supabase sans cookies, revalidation 5 min) : le header reste compatible avec les pages statiques, et un menu vide s'affiche en cas d'erreur plutôt que de casser la page.
+
+## Contact et suivi public de commande
+
+- `/contact` : boutons WhatsApp / appel / email lus depuis `NEXT_PUBLIC_SUPPORT_WHATSAPP|PHONE|EMAIL|HOURS`. Un canal non renseigné n'est pas affiché ; aucun formulaire factice n'est proposé (pas d'envoi d'email tant que le mail pro n'existe pas).
+- `/track-order` : numéro de commande **+ téléphone** (9 derniers chiffres) via la fonction SQL `track_order` (migration `0014`, appliquée). Ne renvoie que statut, articles et total — jamais adresse, email ni identité. Réponse identique pour « commande inconnue » et « mauvais téléphone ».
