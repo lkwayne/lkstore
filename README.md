@@ -347,10 +347,12 @@ base de test avec des données fictives une fois la migration appliquée.
   de cette ville. Douala compte 47 quartiers réels sur 3 paliers de tarif
   (1000 FCFA pour Bonamoussadi et son corridor jusqu'à Akwa, 1500 FCFA pour
   les autres quartiers, 2000 FCFA pour les plus éloignés de Bonamoussadi).
-  Yaoundé et Bafoussam apparaissent dans le sélecteur mais n'ont aucun
-  quartier configuré — le formulaire l'indique clairement plutôt que
-  d'afficher une liste vide silencieuse. À compléter dès que leur grille
-  tarifaire est définie.
+  Yaoundé (46 quartiers) et Bafoussam (16) et Bafoussam sont configurées depuis
+  `0022_yaounde_bafoussam_zones.sql`, sur le même principe : centre-ville à
+  1000 FCFA, quartiers intermédiaires à 1500, périphérie à 2000 (délai de 2
+  jours). Les tarifs sont alignés sur Douala ; le coût réel d'acheminement
+  depuis Douala reste à vérifier avec un transporteur. Liste des quartiers à
+  compléter selon les retours terrain.
 
 ## Création automatique de compte client (livré)
 

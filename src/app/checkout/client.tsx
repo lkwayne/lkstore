@@ -15,10 +15,9 @@ import type { CartProductData } from "@/types/cart";
 import type { ShippingZone, Store } from "@/types/shipping";
 import type { CreateOrderResult } from "@/services/order.service";
 
-// Villes où la livraison est proposée. Douala est la seule desservie pour
-// l'instant (voir supabase/migrations/0012_douala_shipping_zones.sql) —
-// Yaoundé et Bafoussam restent sélectionnables mais afficheront qu'aucun
-// quartier n'est encore configuré tant que leur grille tarifaire n'existe pas.
+// Villes où la livraison est proposée. Grilles tarifaires dans
+// supabase/migrations/0012_douala_shipping_zones.sql (Douala) et
+// 0022_yaounde_bafoussam_zones.sql (Yaoundé, Bafoussam).
 const AVAILABLE_CITIES = ["Douala", "Yaoundé", "Bafoussam"] as const;
 
 export function CheckoutPageClient({ header }: { header: React.ReactNode }) {
