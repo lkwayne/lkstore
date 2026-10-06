@@ -45,7 +45,6 @@ begin
 end;
 $$;
 
-drop trigger if exists reviews_enforce_rules on reviews;
 create trigger reviews_enforce_rules
   before insert on reviews
   for each row execute function enforce_review_rules();
