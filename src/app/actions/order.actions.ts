@@ -53,7 +53,8 @@ export async function placeOrder(
 
   let order: CreateOrderResult;
   try {
-    order = await createOrder(parsed.data, items);
+    const currentUser = await getCurrentUser();
+    order = await createOrder(parsed.data, items, currentUser?.id ?? null);
   } catch (err) {
     const message =
       err instanceof Error

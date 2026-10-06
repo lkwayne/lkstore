@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { CheckoutInput } from "@/schemas/order.schema";
 import type { CartLine } from "@/types/cart";
 
@@ -15,7 +16,8 @@ export interface CreateOrderResult {
  */
 export function buildCreateOrderPayload(
   input: CheckoutInput,
-  items: CartLine[]
+  items: CartLine[],
+  customerId?: string | null
 ): Record<string, unknown> {
   const payload: Record<string, unknown> = {
     items: items.map((line) => ({
@@ -30,6 +32,9 @@ export function buildCreateOrderPayload(
     customer_email: input.customerEmail || null,
   };
 
+  if (input.couponCode) payload.coupon_code = input.couponCode;
+  if (customerId) payload.customer_id = customerId;
+
   if (input.receptionMethod === "DELIVERY") {
     payload.shipping_zone_id = input.shippingZoneId;
     payload.address_line = input.addressLine;
@@ -43,10 +48,14 @@ export function buildCreateOrderPayload(
 
 export async function createOrder(
   input: CheckoutInput,
-  items: CartLine[]
+  items: CartLine[],
+  customerId?: string | null
 ): Promise<CreateOrderResult> {
-  const payload = buildCreateOrderPayload(input, items);
-  const supabase = await createClient();
+  const payload = buildCreateOrderPayload(input, items, customerId);
+  // Appel via service_role : l'identité du client est vérifiée par l'action
+  // serveur (getCurrentUser) et transmise dans le payload. Ce client n'est
+  // jamais exposé au navigateur.
+  const supabase = createAdminClient();
 
   // L'inférence de type de supabase-js pour .rpc() échoue à résoudre notre
   // Database custom à travers @supabase/ssr (profondeur d'instanciation

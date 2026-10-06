@@ -9,6 +9,7 @@ const NAV_ITEMS: { href: string; label: string; permission: Permission }[] = [
   { href: "/admin/orders", label: "Commandes", permission: "orders.manage" },
   { href: "/admin/categories", label: "Catégories", permission: "catalog.manage" },
   { href: "/admin/products", label: "Produits", permission: "catalog.manage" },
+  { href: "/admin/coupons", label: "Codes promo", permission: "catalog.manage" },
   { href: "/admin/suppliers", label: "Fournisseurs", permission: "suppliers.manage" },
   { href: "/admin/reviews", label: "Avis", permission: "reviews.moderate" },
   { href: "/admin/fulfillment", label: "Dropshipping", permission: "fulfillment.manage" },

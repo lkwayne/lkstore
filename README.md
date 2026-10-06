@@ -466,3 +466,12 @@ Les droits sont appliqués trois fois : menu, garde des pages/actions (`guardPag
 - Balises de partage (Open Graph / Twitter) : image de marque `src/app/opengraph-image.png`, photo du produit sur chaque fiche.
 - Données structurées JSON-LD : `Organization` (toutes les pages) et `Product` (prix XAF, disponibilité, note moyenne) sur chaque fiche produit.
 - Après changement de domaine : soumettre `…/sitemap.xml` dans Google Search Console.
+
+## Codes promo
+
+- Gestion : `/admin/coupons` (permission `catalog.manage`) — code en majuscules, % ou montant fixe, achat minimum, plafond de remise, limite d'utilisations, date d'expiration, activation/désactivation.
+- La remise s'applique sur les articles, jamais sur la livraison.
+- Sécurité : la table `coupons` n'est plus lisible publiquement. La validation se fait dans la fonction SQL `check_coupon` (service_role uniquement) ; `create_order` recalcule la remise en base sous verrou et incrémente l'usage — le navigateur n'envoie qu'un code, jamais un montant.
+- `create_order` est appelée côté serveur via service_role avec l'identité du client vérifiée (`customer_id` n'est accepté que de service_role).
+- Aperçu au checkout : action `applyCoupon`, limitée à 20 essais / 10 min / IP.
+- Migration 0020 : correction des codes d'erreur de `create_order` (SQLSTATE sur 5 caractères).

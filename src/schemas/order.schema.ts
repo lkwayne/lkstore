@@ -19,6 +19,9 @@ export const checkoutSchema = z
     receptionMethod: z.enum(RECEPTION_METHODS),
     paymentMethod: z.enum(PAYMENT_METHODS),
 
+    // Code promo optionnel — la remise est recalculée en base, jamais envoyée.
+    couponCode: z.string().trim().max(30).optional(),
+
     // Requis si receptionMethod === "DELIVERY"
     shippingZoneId: z.string().uuid().optional(),
     addressLine: z.string().min(3, "Adresse requise").optional().or(z.literal("")),

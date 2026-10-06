@@ -10,6 +10,7 @@ import { checkoutSchema, type CheckoutInput } from "@/schemas/order.schema";
 import { formatPrice } from "@/lib/format-price";
 import { fetchCartProductData } from "@/app/actions/cart.actions";
 import { getCheckoutOptions, placeOrder } from "@/app/actions/order.actions";
+import { applyCoupon } from "@/app/actions/coupon.actions";
 import type { CartProductData } from "@/types/cart";
 import type { ShippingZone, Store } from "@/types/shipping";
 import type { CreateOrderResult } from "@/services/order.service";
@@ -30,6 +31,10 @@ export function CheckoutPageClient({ header }: { header: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [couponMessage, setCouponMessage] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [orderResult, setOrderResult] = useState<CreateOrderResult | null>(null);
 
   const {
@@ -103,7 +108,32 @@ export function CheckoutPageClient({ header }: { header: React.ReactNode }) {
     [zones, selectedCity]
   );
   const shippingFee = receptionMethod === "DELIVERY" ? (selectedZone?.fee ?? 0) : 0;
-  const estimatedTotal = subtotal + shippingFee;
+  // Remise recalculée à chaque changement de panier côté serveur ; ici on
+  // ne l'affiche que si elle ne dépasse pas le sous-total courant.
+  const discount = coupon ? Math.min(coupon.discount, subtotal) : 0;
+  const estimatedTotal = subtotal - discount + shippingFee;
+
+  async function handleApplyCoupon() {
+    setCouponLoading(true);
+    setCouponMessage(null);
+    try {
+      const res = await applyCoupon(
+        couponInput,
+        lines.map((l) => ({ productId: l.productId, quantity: l.quantity }))
+      );
+      if (res.valid) {
+        setCoupon({ code: res.code, discount: res.discount });
+        setCouponMessage(null);
+      } else {
+        setCoupon(null);
+        setCouponMessage(res.message);
+      }
+    } catch {
+      setCouponMessage("Code indisponible pour le moment.");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
 
   function handleReceptionChange(method: "DELIVERY" | "STORE_PICKUP") {
     setValue("receptionMethod", method);
@@ -113,7 +143,7 @@ export function CheckoutPageClient({ header }: { header: React.ReactNode }) {
   async function onSubmit(data: CheckoutInput) {
     setSubmitError(null);
     const result = await placeOrder(
-      data,
+      { ...data, couponCode: coupon?.code },
       lines.map((l) => ({ productId: l.productId, quantity: l.quantity }))
     );
     if (result.success) {
@@ -469,11 +499,39 @@ export function CheckoutPageClient({ header }: { header: React.ReactNode }) {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-4">
+                  <div className="flex gap-2">
+                    <input
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      placeholder="Code promo"
+                      aria-label="Code promo"
+                      className="min-w-0 flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm uppercase focus:border-brand-orange focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading || !couponInput.trim()}
+                      className="rounded-lg border border-brand-orange px-3 py-2 text-sm font-semibold text-brand-orange disabled:opacity-50"
+                    >
+                      {couponLoading ? "…" : "Appliquer"}
+                    </button>
+                  </div>
+                  {couponMessage ? (
+                    <p className="mt-1.5 text-xs text-brand-red">{couponMessage}</p>
+                  ) : null}
+                </div>
                 <div className="mt-4 space-y-1.5 border-t border-neutral-200 pt-3 text-sm">
                   <div className="flex justify-between text-neutral-500">
                     <span>Sous-total</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
+                  {coupon ? (
+                    <div className="flex justify-between text-green-700">
+                      <span>Code {coupon.code}</span>
+                      <span>− {formatPrice(discount)}</span>
+                    </div>
+                  ) : null}
                   <div className="flex justify-between text-neutral-500">
                     <span>Livraison</span>
                     <span>
