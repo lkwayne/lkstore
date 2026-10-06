@@ -10,6 +10,7 @@ import {
   sendWhatsAppAccessMessage,
 } from "@/services/whatsapp-notification.service";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { allowRequest, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rate-limit";
 import type { CartLine } from "@/types/cart";
 import type { ShippingZone, Store } from "@/types/shipping";
 
@@ -40,6 +41,14 @@ export async function placeOrder(
   if (items.length === 0) {
     return { success: false, error: "Votre panier est vide." };
   }
+
+  // Anti-abus : 10 commandes par heure et par adresse IP, 5 par téléphone.
+  const ip = await getClientIp();
+  const [ipOk, phoneOk] = await Promise.all([
+    allowRequest("order:ip", ip, 10, 60 * 60),
+    allowRequest("order:phone", parsed.data.customerPhone, 5, 60 * 60),
+  ]);
+  if (!ipOk || !phoneOk) return { success: false, error: RATE_LIMIT_MESSAGE };
 
   let order: CreateOrderResult;
   try {

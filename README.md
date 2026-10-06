@@ -427,3 +427,9 @@ réellement connectée à un service réel avec des identifiants valides.
 - Flux Supabase « implicit » volontaire : le lien fonctionne même ouvert dans un autre navigateur que celui de la demande (appli mail sur mobile).
 - Le lien d'accès envoyé après un achat (création auto du compte) pointe maintenant vers `/reset-password` (il pointait vers `/login`, où rien ne permettait de définir un mot de passe).
 - Prérequis Supabase : la Site URL et `https://<site>/**` dans Redirect URLs (déjà configurés).
+
+## Sécurité et anti-abus
+
+- **Limitation de débit** (`src/lib/rate-limit.ts`, migration `0016`) : table `rate_limits` + fonction `rate_limit_hit`, accessibles uniquement au service_role. Limites actuelles : connexion 20 / 15 min par IP et 8 / 15 min par email ; inscription 5 / h par IP ; commande 10 / h par IP et 5 / h par téléphone ; suivi de commande 10 / 10 min par IP. Si le limiteur tombe en panne, les requêtes passent (une commande ne doit jamais être bloquée par un incident technique).
+- **Garde admin** : toutes les actions d'administration appellent `requireStaff()` (`auth.service.ts`) avant toute opération, en plus des règles RLS.
+- **Migration `0015`** : tables de compteurs verrouillées (RLS) et fonctions internes non appelables depuis l'extérieur.

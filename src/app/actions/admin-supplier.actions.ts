@@ -1,5 +1,6 @@
 "use server";
 
+import { requireStaff } from "@/services/auth.service";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { supplierSchema, supplierProductSchema, type SupplierInput, type SupplierProductInput } from "@/schemas/supplier.schema";
@@ -20,6 +21,7 @@ export async function saveNewSupplier(input: SupplierInput): Promise<AdminAction
   }
   let id: string;
   try {
+    await requireStaff();
     id = await createSupplier(parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -37,6 +39,7 @@ export async function saveExistingSupplier(
     return { success: false, error: "Certains champs du formulaire sont invalides." };
   }
   try {
+    await requireStaff();
     await updateSupplier(id, parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -54,6 +57,7 @@ export async function linkProductToSupplier(
     return { success: false, error: "Certains champs sont invalides." };
   }
   try {
+    await requireStaff();
     await addSupplierProduct(supplierId, parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -67,6 +71,7 @@ export async function unlinkProductFromSupplier(
   linkId: string
 ): Promise<AdminActionResult> {
   try {
+    await requireStaff();
     await removeSupplierProduct(linkId);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -80,6 +85,7 @@ export async function changeFulfillmentOrder(
   values: { status?: string; trackingNumber?: string }
 ): Promise<AdminActionResult> {
   try {
+    await requireStaff();
     await updateFulfillmentOrder(id, values);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };

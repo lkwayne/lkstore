@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { allowRequest, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rate-limit";
 
 export type AuthResult = { success: true } | { success: false; error: string };
 
@@ -18,6 +19,13 @@ function translateAuthError(message: string): string {
 }
 
 export async function signIn(email: string, password: string): Promise<AuthResult> {
+  const ip = await getClientIp();
+  const [ipOk, emailOk] = await Promise.all([
+    allowRequest("login:ip", ip, 20, 15 * 60),
+    allowRequest("login:email", email, 8, 15 * 60),
+  ]);
+  if (!ipOk || !emailOk) return { success: false, error: RATE_LIMIT_MESSAGE };
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -34,6 +42,9 @@ export async function signUp(input: {
   lastName: string;
   phone: string;
 }): Promise<AuthResult> {
+  if (!(await allowRequest("signup:ip", await getClientIp(), 5, 60 * 60))) {
+    return { success: false, error: RATE_LIMIT_MESSAGE };
+  }
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email: input.email,

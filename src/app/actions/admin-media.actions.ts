@@ -1,5 +1,6 @@
 "use server";
 
+import { requireStaff } from "@/services/auth.service";
 import { revalidatePath } from "next/cache";
 import {
   uploadProductMedia,
@@ -9,6 +10,7 @@ import {
 } from "@/services/product-media.service";
 
 export async function getProductMedia(productId: string): Promise<ProductMediaItem[]> {
+  await requireStaff();
   return listProductMedia(productId);
 }
 
@@ -23,6 +25,7 @@ export async function uploadMedia(
   }
 
   try {
+    await requireStaff();
     const result = await uploadProductMedia(productId, files);
     revalidatePath(`/admin/products/${productId}/edit`);
     return { success: result.uploaded > 0, uploaded: result.uploaded, errors: result.errors };
@@ -40,6 +43,7 @@ export async function deleteMedia(
   mediaId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    await requireStaff();
     await removeProductMedia(mediaId);
     revalidatePath(`/admin/products/${productId}/edit`);
     return { success: true };

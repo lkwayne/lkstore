@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { allowRequest, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rate-limit";
 
 export interface TrackedOrder {
   orderNumber: string;
@@ -18,6 +19,11 @@ export type TrackResult =
   | { error: string };
 
 export async function trackOrder(orderNumber: string, phone: string): Promise<TrackResult> {
+  // Évite de deviner des numéros de commande : 10 essais / 10 min par IP.
+  const ip = await getClientIp();
+  if (!(await allowRequest("track:ip", ip, 10, 10 * 60))) {
+    return { error: RATE_LIMIT_MESSAGE };
+  }
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

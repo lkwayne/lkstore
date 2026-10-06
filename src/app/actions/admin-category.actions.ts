@@ -1,5 +1,6 @@
 "use server";
 
+import { requireStaff } from "@/services/auth.service";
 import { revalidatePath } from "next/cache";
 import { categorySchema, subcategorySchema, type CategoryInput, type SubcategoryInput } from "@/schemas/category.schema";
 import {
@@ -19,6 +20,7 @@ export async function saveNewCategory(input: CategoryInput): Promise<AdminAction
     return { success: false, error: "Certains champs du formulaire sont invalides." };
   }
   try {
+    await requireStaff();
     await createCategory(parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -36,6 +38,7 @@ export async function saveExistingCategory(
     return { success: false, error: "Certains champs du formulaire sont invalides." };
   }
   try {
+    await requireStaff();
     await updateCategory(id, parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -47,6 +50,7 @@ export async function saveExistingCategory(
 
 export async function removeCategory(id: string): Promise<AdminActionResult> {
   try {
+    await requireStaff();
     await deleteCategoryIfEmpty(id);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -64,6 +68,7 @@ export async function addSubcategory(
     return { success: false, error: "Certains champs sont invalides." };
   }
   try {
+    await requireStaff();
     await createSubcategory(categoryId, parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -82,6 +87,7 @@ export async function editSubcategory(
     return { success: false, error: "Certains champs sont invalides." };
   }
   try {
+    await requireStaff();
     await updateSubcategory(id, categoryId, parsed.data);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -95,6 +101,7 @@ export async function removeSubcategory(
   categoryId: string
 ): Promise<AdminActionResult> {
   try {
+    await requireStaff();
     await deleteSubcategoryIfEmpty(id);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };

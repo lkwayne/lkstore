@@ -1,5 +1,6 @@
 "use server";
 
+import { requireStaff } from "@/services/auth.service";
 import { revalidatePath } from "next/cache";
 import {
   deleteReview,
@@ -30,6 +31,7 @@ export async function createReview(
 
 export async function moderateReview(reviewId: string, approved: boolean): Promise<Result> {
   try {
+    await requireStaff();
     await setReviewApproval(reviewId, approved);
     revalidatePath("/admin/reviews");
     return { success: true };
@@ -40,6 +42,7 @@ export async function moderateReview(reviewId: string, approved: boolean): Promi
 
 export async function removeReview(reviewId: string): Promise<Result> {
   try {
+    await requireStaff();
     await deleteReview(reviewId);
     revalidatePath("/admin/reviews");
     return { success: true };

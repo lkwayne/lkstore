@@ -34,3 +34,15 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
 export function isStaffRole(role: Profile["role"] | undefined | null): boolean {
   return !!role && role !== "CUSTOMER";
 }
+
+/**
+ * Garde explicite pour les actions d'administration : en plus des règles RLS
+ * de la base, on refuse l'appel dès l'entrée si l'utilisateur n'est pas staff.
+ */
+export async function requireStaff(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user || !isStaffRole(user.profile?.role)) {
+    throw new Error("Accès réservé à l'équipe.");
+  }
+  return user;
+}
