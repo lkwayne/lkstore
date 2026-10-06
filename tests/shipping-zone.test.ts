@@ -1,0 +1,30 @@
+import { describe, it, expect } from "vitest";
+import { shippingZoneSchema, shippingZoneUpdateSchema } from "@/schemas/shipping-zone.schema";
+import { can } from "@/config/permissions";
+
+describe("shippingZoneSchema", () => {
+  const ok = { city: "Yaoundé", neighborhood: "Bastos", fee: 1000, estimatedDays: 1, codAllowed: true };
+  it("accepte une zone valide", () => {
+    expect(shippingZoneSchema.safeParse(ok).success).toBe(true);
+  });
+  it("refuse tarif négatif, délai nul et quartier vide", () => {
+    expect(shippingZoneSchema.safeParse({ ...ok, fee: -1 }).success).toBe(false);
+    expect(shippingZoneSchema.safeParse({ ...ok, estimatedDays: 0 }).success).toBe(false);
+    expect(shippingZoneSchema.safeParse({ ...ok, neighborhood: " " }).success).toBe(false);
+  });
+  it("la mise à jour exige l'état actif", () => {
+    expect(shippingZoneUpdateSchema.safeParse({ fee: 1500, estimatedDays: 2, codAllowed: false, isActive: true }).success).toBe(true);
+    expect(shippingZoneUpdateSchema.safeParse({ fee: 1500, estimatedDays: 2, codAllowed: false }).success).toBe(false);
+  });
+});
+
+describe("permission shipping.manage", () => {
+  it("réservée aux admins, managers et super admins (comme la RLS)", () => {
+    expect(can("SUPER_ADMIN", "shipping.manage")).toBe(true);
+    expect(can("ADMIN", "shipping.manage")).toBe(true);
+    expect(can("MANAGER", "shipping.manage")).toBe(true);
+    expect(can("LOGISTICS", "shipping.manage")).toBe(false);
+    expect(can("MARKETING", "shipping.manage")).toBe(false);
+    expect(can("CUSTOMER", "shipping.manage")).toBe(false);
+  });
+});

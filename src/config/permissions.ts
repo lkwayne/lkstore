@@ -14,6 +14,7 @@ export type Permission =
   | "suppliers.manage" // fournisseurs et liens produit-fournisseur
   | "fulfillment.manage" // commandes fournisseur (dropshipping)
   | "reviews.moderate" // avis clients
+  | "shipping.manage" // zones et tarifs de livraison
   | "team.manage"; // équipe et rôles
 
 const MANAGERS: Permission[] = [
@@ -25,6 +26,7 @@ const MANAGERS: Permission[] = [
   "suppliers.manage",
   "fulfillment.manage",
   "reviews.moderate",
+  "shipping.manage",
 ];
 
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {

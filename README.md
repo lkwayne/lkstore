@@ -477,3 +477,7 @@ Les droits sont appliqués trois fois : menu, garde des pages/actions (`guardPag
 - `create_order` est appelée côté serveur via service_role avec l'identité du client vérifiée (`customer_id` n'est accepté que de service_role).
 - Aperçu au checkout : action `applyCoupon`, limitée à 20 essais / 10 min / IP.
 - Migration 0020 : correction des codes d'erreur de `create_order` (SQLSTATE sur 5 caractères).
+
+## Gestion de la livraison (admin)
+
+`/admin/shipping` (permission `shipping.manage`, réservée à ADMIN / MANAGER / SUPER_ADMIN comme la RLS de `shipping_zones`) : modifier le tarif, le délai, le paiement à la livraison et l'activation de chaque quartier, et ajouter un quartier ou une ville. Pas de suppression : on désactive, pour ne rien casser côté historique. Les changements s'appliquent tout de suite au paiement.
