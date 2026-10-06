@@ -54,16 +54,26 @@ export const dynamic = "force-dynamic";
 export const metadata = { alternates: { canonical: "/" } };
 
 export default async function HomePage() {
-  const [categories, featured, latest, wishlistIds] = await Promise.all([
+  const [categories, flash, promos, featuredAll, latest, wishlistIds] = await Promise.all([
     getCategories(),
+    safe(getProductsByFlag({ flag: "is_flash_deal", pageSize: 4 }).then((r) => r.items), []),
+    safe(getProductsByFlag({ flag: "is_on_sale", pageSize: 4 }).then((r) => r.items), []),
     safe(getProductsByFlag({ flag: "is_featured", pageSize: 8 }).then((r) => r.items), []),
     safe(getLatestProducts(8), []),
     safe(getWishlistProductIds(), new Set<string>()),
   ]);
   const favorites = wishlistIds;
-  const featuredIds = new Set(featured.map((p) => p.id));
-  // Les derniers produits n'incluent pas ceux déjà mis en avant.
-  const latestOnly = latest.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
+  // Un produit n'apparaît qu'une fois sur l'accueil : flash > promo > vedette > récent.
+  const seen = new Set<string>();
+  const take = (list: ProductSummary[]) => {
+    const out = list.filter((p) => !seen.has(p.id));
+    out.forEach((p) => seen.add(p.id));
+    return out;
+  };
+  const flashShelf = take(flash);
+  const promoShelf = take(promos);
+  const featured = take(featuredAll);
+  const latestOnly = take(latest).slice(0, 8);
 
   return (
     <>
@@ -71,7 +81,9 @@ export default async function HomePage() {
       <main className="flex-1">
         <HeroSection />
 
-        <ProductShelf title="Produits vedettes" href="/promotions" products={featured} favorites={favorites} />
+        <ProductShelf title="⚡ Flash Deals" href="/flash-deals" products={flashShelf} favorites={favorites} />
+        <ProductShelf title="Promotions" href="/promotions" products={promoShelf} favorites={favorites} />
+        <ProductShelf title="Produits vedettes" href="/categories" products={featured} favorites={favorites} />
         <ProductShelf
           title={featured.length > 0 ? "Derniers arrivages" : "Nos produits"}
           href="/nouveautes"

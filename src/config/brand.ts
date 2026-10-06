@@ -16,6 +16,7 @@ export const BRAND = {
 export const MAIN_NAV = [
   { label: "Accueil", href: "/" },
   { label: "Catégories", href: "/categories" },
+  { label: "Flash Deals", href: "/flash-deals" },
   { label: "Promotions", href: "/promotions" },
   { label: "Nouveautés", href: "/nouveautes" },
   { label: "Meilleures ventes", href: "/meilleures-ventes" },
