@@ -457,3 +457,12 @@ Les droits sont appliqués trois fois : menu, garde des pages/actions (`guardPag
 ## Règle importante : `Header` et pages clientes
 
 `Header` est un composant **serveur asynchrone** (il charge le méga-menu). Il ne doit **jamais** être importé dans un fichier `"use client"` : la page ne devient alors pas interactive (boutons sans effet). Les pages interactives (connexion, inscription, panier, paiement, mot de passe) sont donc découpées en `page.tsx` (serveur, rend `<Header />`) + `client.tsx` (formulaire, reçoit `header` en prop).
+
+## SEO
+
+- `src/config/site.ts` : nom, description et `getSiteUrl()` (variable `NEXT_PUBLIC_SITE_URL`, **à régler sur le vrai domaine dès qu'il existe**, puis redéployer).
+- `robots.txt` (`src/app/robots.ts`) : bloque admin, compte, panier, paiement, connexion, favoris, suivi, recherche.
+- `sitemap.xml` (`src/app/sitemap.ts`) : pages fixes + catégories + produits publiés, régénéré toutes les heures.
+- Balises de partage (Open Graph / Twitter) : image de marque `src/app/opengraph-image.png`, photo du produit sur chaque fiche.
+- Données structurées JSON-LD : `Organization` (toutes les pages) et `Product` (prix XAF, disponibilité, note moyenne) sur chaque fiche produit.
+- Après changement de domaine : soumettre `…/sitemap.xml` dans Google Search Console.

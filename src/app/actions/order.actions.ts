@@ -10,6 +10,7 @@ import {
   sendWhatsAppAccessMessage,
 } from "@/services/whatsapp-notification.service";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getSiteUrl } from "@/config/site";
 import { allowRequest, getClientIp, RATE_LIMIT_MESSAGE } from "@/lib/rate-limit";
 import type { CartLine } from "@/types/cart";
 import type { ShippingZone, Store } from "@/types/shipping";
@@ -106,7 +107,7 @@ async function createAccountAndSendAccess(
   }
 
   if (isWhatsAppConfigured()) {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senduu.app";
+    const siteUrl = getSiteUrl();
     await sendWhatsAppAccessMessage({
       phone: input.customerPhone,
       firstName: input.customerFirstName,

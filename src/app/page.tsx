@@ -7,6 +7,8 @@ import { getCategories } from "@/services/catalog.service";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default async function HomePage() {
   const categories = await getCategories();
 

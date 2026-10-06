@@ -28,9 +28,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
   if (!category) return {};
+  const title = `${category.name} — SENDUU`;
+  const description =
+    category.description ??
+    `Découvrez tous les produits ${category.name} disponibles sur SENDUU : livraison à Douala, paiement à la livraison ou en magasin.`;
+  const path = `/categories/${category.slug}`;
   return {
-    title: `${category.name} — SENDUU`,
-    description: `Découvrez tous les produits ${category.name} disponibles sur SENDUU.`,
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      siteName: "SENDUU",
+      locale: "fr_CM",
+      title,
+      description,
+      url: path,
+      images: category.imageUrl ? [{ url: category.imageUrl, alt: category.name }] : undefined,
+    },
   };
 }
 

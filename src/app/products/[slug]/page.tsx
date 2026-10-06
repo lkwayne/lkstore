@@ -10,8 +10,23 @@ import { formatPrice } from "@/lib/format-price";
 import { getProductBySlug } from "@/services/catalog.service";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { getWishlistProductIds } from "@/services/wishlist.service";
+import { SITE_NAME, getSiteUrl, toJsonLd } from "@/config/site";
 
 export const dynamic = "force-dynamic";
+
+function productDescription(product: {
+  name: string;
+  price: number;
+  description: string | null;
+  seoDescription: string | null;
+}): string {
+  const raw =
+    product.seoDescription ??
+    product.description ??
+    `${product.name} disponible sur ${SITE_NAME} à ${formatPrice(product.price)}. Livraison à Douala, paiement à la livraison ou en magasin.`;
+  const clean = raw.replace(/\s+/g, " ").trim();
+  return clean.length > 160 ? `${clean.slice(0, 157)}…` : clean;
+}
 
 export async function generateMetadata({
   params,
@@ -21,9 +36,29 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
+  const title = product.seoTitle ?? `${product.name} — ${SITE_NAME}`;
+  const description = productDescription(product);
+  const image = product.images.find((m) => m.mediaType === "IMAGE")?.url;
+  const path = `/products/${product.slug}`;
   return {
-    title: product.seoTitle ?? `${product.name} — SENDUU`,
-    description: product.seoDescription ?? product.description ?? undefined,
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: "fr_CM",
+      title,
+      description,
+      url: path,
+      images: image ? [{ url: image, alt: product.name }] : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
@@ -39,11 +74,48 @@ export default async function ProductDetailPage({
   const wishlistIds = await getWishlistProductIds();
   const isFavorite = wishlistIds.has(product.id);
 
+  const siteUrl = getSiteUrl();
+  const imageUrls = product.images.filter((m) => m.mediaType === "IMAGE").map((m) => m.url);
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: productDescription(product),
+    image: imageUrls.length > 0 ? imageUrls : undefined,
+    brand: product.brand ? { "@type": "Brand", name: product.brand.name } : undefined,
+    itemCondition:
+      product.condition === "NEUF"
+        ? "https://schema.org/NewCondition"
+        : "https://schema.org/UsedCondition",
+    offers: {
+      "@type": "Offer",
+      url: `${siteUrl}/products/${product.slug}`,
+      priceCurrency: "XAF",
+      price: product.price,
+      availability:
+        product.stockQuantity > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+    },
+    aggregateRating:
+      product.reviewCount > 0 && product.averageRating != null
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: product.averageRating,
+            reviewCount: product.reviewCount,
+          }
+        : undefined,
+  };
+
   const hasDiscount =
     product.compareAtPrice != null && product.compareAtPrice > product.price;
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: toJsonLd(productJsonLd) }}
+      />
       <Header />
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">

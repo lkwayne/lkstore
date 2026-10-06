@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Recherche — SENDUU",
+  robots: { index: false, follow: true },
 };
 
 export default async function SearchPage({
