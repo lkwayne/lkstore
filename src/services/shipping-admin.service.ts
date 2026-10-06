@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import {
   shippingZoneSchema,
   shippingZoneUpdateSchema,
@@ -28,10 +28,12 @@ interface ZonesTable {
   insert: (v: Record<string, unknown>) => Promise<{ error: Err }>;
   update: (v: Record<string, unknown>) => { eq: (c: "id", v: string) => Promise<{ error: Err }> };
 }
-const table = () => createAdminClient().from("shipping_zones") as unknown as ZonesTable;
+// Client utilisateur (pas service_role) : la RLS et le trigger
+// shipping_zones_guard_prices s'appliquent aussi en base.
+const table = async () => (await createClient()).from("shipping_zones") as unknown as ZonesTable;
 
 export async function listAllZones(): Promise<AdminZone[]> {
-  const { data, error } = await table()
+  const { data, error } = await (await table())
     .select("id, city, neighborhood, fee, estimated_days, cod_allowed, is_active")
     .order("city", { ascending: true })
     .order("fee", { ascending: true });
@@ -58,7 +60,7 @@ export async function createZone(input: ShippingZoneInput): Promise<void> {
     (z) => z.city.toLowerCase() === d.city.toLowerCase() && z.neighborhood.toLowerCase() === d.neighborhood.toLowerCase()
   );
   if (dup) throw new Error("Ce quartier existe déjà dans cette ville.");
-  const { error } = await table().insert({
+  const { error } = await (await table()).insert({
     city: d.city,
     neighborhood: d.neighborhood,
     fee: d.fee,
@@ -69,12 +71,21 @@ export async function createZone(input: ShippingZoneInput): Promise<void> {
   if (error) throw new Error("Impossible d'ajouter ce quartier.");
 }
 
-export async function updateZone(id: string, input: ShippingZoneUpdateInput): Promise<void> {
+/** `includeFee` = false : le tarif n'est jamais envoyé (rôles sans droit sur les prix). */
+export async function updateZone(
+  id: string,
+  input: ShippingZoneUpdateInput,
+  includeFee: boolean
+): Promise<void> {
   const parsed = shippingZoneUpdateSchema.safeParse(input);
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Données invalides.");
   const d = parsed.data;
-  const { error } = await table()
-    .update({ fee: d.fee, estimated_days: d.estimatedDays, cod_allowed: d.codAllowed, is_active: d.isActive })
-    .eq("id", id);
+  const values: Record<string, unknown> = {
+    estimated_days: d.estimatedDays,
+    cod_allowed: d.codAllowed,
+    is_active: d.isActive,
+  };
+  if (includeFee) values.fee = d.fee;
+  const { error } = await (await table()).update(values).eq("id", id);
   if (error) throw new Error("Impossible de modifier cette zone.");
 }

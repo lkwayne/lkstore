@@ -28,3 +28,13 @@ describe("permission shipping.manage", () => {
     expect(can("CUSTOMER", "shipping.manage")).toBe(false);
   });
 });
+
+describe("permission shipping.prices", () => {
+  it("les tarifs sont fixés par admin, manager et super admin seulement", () => {
+    expect(can("SUPER_ADMIN", "shipping.prices")).toBe(true);
+    expect(can("ADMIN", "shipping.prices")).toBe(true);
+    expect(can("MANAGER", "shipping.prices")).toBe(true);
+    expect(can("LOGISTICS", "shipping.prices")).toBe(false);
+    expect(can("MARKETING", "shipping.prices")).toBe(false);
+  });
+});

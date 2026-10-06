@@ -7,7 +7,7 @@ import type { AdminZone } from "@/services/shipping-admin.service";
 const inputClass =
   "w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:border-brand-orange focus:outline-none";
 
-function ZoneRow({ zone }: { zone: AdminZone }) {
+function ZoneRow({ zone, canEditPrices }: { zone: AdminZone; canEditPrices: boolean }) {
   const [fee, setFee] = useState(String(zone.fee));
   const [days, setDays] = useState(String(zone.estimatedDays));
   const [cod, setCod] = useState(zone.codAllowed);
@@ -39,7 +39,7 @@ function ZoneRow({ zone }: { zone: AdminZone }) {
       <span className="min-w-36 flex-1 text-sm font-medium text-brand-navy">{zone.neighborhood}</span>
       <label className="flex items-center gap-1 text-xs text-neutral-500">
         FCFA
-        <input type="number" min="0" value={fee} onChange={(e) => setFee(e.target.value)} className={`${inputClass} w-24`} />
+        <input type="number" min="0" value={fee} disabled={!canEditPrices} onChange={(e) => setFee(e.target.value)} className={`${inputClass} w-24 disabled:bg-neutral-50 disabled:text-neutral-500`} />
       </label>
       <label className="flex items-center gap-1 text-xs text-neutral-500">
         Jours
@@ -60,7 +60,7 @@ function ZoneRow({ zone }: { zone: AdminZone }) {
   );
 }
 
-export function ShippingZoneManager({ zones }: { zones: AdminZone[] }) {
+export function ShippingZoneManager({ zones, canEditPrices }: { zones: AdminZone[]; canEditPrices: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const cities = [...new Set(zones.map((z) => z.city))];
@@ -85,6 +85,7 @@ export function ShippingZoneManager({ zones }: { zones: AdminZone[] }) {
 
   return (
     <div className="mt-6 space-y-8">
+      {canEditPrices ? (
       <section className="rounded-2xl border border-neutral-200 bg-white p-5">
         <h2 className="font-semibold text-brand-navy">Ajouter un quartier</h2>
         <form onSubmit={onAdd} className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -105,6 +106,7 @@ export function ShippingZoneManager({ zones }: { zones: AdminZone[] }) {
         </form>
         {error ? <p className="mt-3 text-sm text-brand-red">{error}</p> : null}
       </section>
+      ) : null}
 
       {cities.map((city) => {
         const list = zones.filter((z) => z.city === city);
@@ -115,7 +117,7 @@ export function ShippingZoneManager({ zones }: { zones: AdminZone[] }) {
             </h2>
             <ul className="space-y-2">
               {list.map((z) => (
-                <ZoneRow key={z.id} zone={z} />
+                <ZoneRow key={z.id} zone={z} canEditPrices={canEditPrices} />
               ))}
             </ul>
           </section>
