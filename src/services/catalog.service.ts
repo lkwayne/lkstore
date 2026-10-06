@@ -446,3 +446,19 @@ export async function listSubcategories(categoryId: string): Promise<Subcategory
 
   return (data ?? []).map(mapSubcategory);
 }
+
+/** Derniers produits publiés, tous confondus — sert de vitrine à l'accueil. */
+export async function getLatestProducts(limit = 8): Promise<ProductSummary[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select(PRODUCT_SUMMARY_SELECT)
+    .eq("status", "PUBLISHED")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`Impossible de charger les produits : ${error.message}`);
+  }
+  return (data ?? []).map((row) => mapProductSummary(row as unknown as Record<string, unknown>));
+}

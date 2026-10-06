@@ -3,20 +3,81 @@ import Image from "next/image";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { Footer } from "@/components/Footer";
-import { getCategories } from "@/services/catalog.service";
+import { ProductCard } from "@/components/ProductCard";
+import {
+  getCategories,
+  getLatestProducts,
+  getProductsByFlag,
+} from "@/services/catalog.service";
+import { getWishlistProductIds } from "@/services/wishlist.service";
+import type { ProductSummary } from "@/types/catalog";
+
+async function safe<T>(promise: Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await promise;
+  } catch {
+    return fallback;
+  }
+}
+
+function ProductShelf({
+  title,
+  href,
+  products,
+  favorites,
+}: {
+  title: string;
+  href: string;
+  products: ProductSummary[];
+  favorites: Set<string>;
+}) {
+  if (products.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-brand-navy sm:text-2xl">{title}</h2>
+        <Link href={href} className="text-sm font-semibold text-brand-orange hover:underline">
+          Voir tout
+        </Link>
+      </div>
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} isFavorite={favorites.has(product.id)} />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export const dynamic = "force-dynamic";
 
 export const metadata = { alternates: { canonical: "/" } };
 
 export default async function HomePage() {
-  const categories = await getCategories();
+  const [categories, featured, latest, wishlistIds] = await Promise.all([
+    getCategories(),
+    safe(getProductsByFlag({ flag: "is_featured", pageSize: 8 }).then((r) => r.items), []),
+    safe(getLatestProducts(8), []),
+    safe(getWishlistProductIds(), new Set<string>()),
+  ]);
+  const favorites = wishlistIds;
+  const featuredIds = new Set(featured.map((p) => p.id));
+  // Les derniers produits n'incluent pas ceux déjà mis en avant.
+  const latestOnly = latest.filter((p) => !featuredIds.has(p.id)).slice(0, 8);
 
   return (
     <>
       <Header />
       <main className="flex-1">
         <HeroSection />
+
+        <ProductShelf title="Produits vedettes" href="/promotions" products={featured} favorites={favorites} />
+        <ProductShelf
+          title={featured.length > 0 ? "Derniers arrivages" : "Nos produits"}
+          href="/nouveautes"
+          products={latestOnly}
+          favorites={favorites}
+        />
 
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
           <div className="flex items-center justify-between">
