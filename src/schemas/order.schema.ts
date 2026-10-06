@@ -15,7 +15,7 @@ export const checkoutSchema = z
       .string()
       .min(9, "Numéro de téléphone invalide")
       .regex(/^[0-9+ ]+$/, "Numéro de téléphone invalide"),
-    customerEmail: z.string().email("Email invalide").optional().or(z.literal("")),
+    customerEmail: z.string().email("Email invalide"),
     receptionMethod: z.enum(RECEPTION_METHODS),
     paymentMethod: z.enum(PAYMENT_METHODS),
 

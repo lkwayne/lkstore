@@ -15,12 +15,19 @@ import type { CartProductData } from "@/types/cart";
 import type { ShippingZone, Store } from "@/types/shipping";
 import type { CreateOrderResult } from "@/services/order.service";
 
+// Villes où la livraison est proposée. Douala est la seule desservie pour
+// l'instant (voir supabase/migrations/0012_douala_shipping_zones.sql) —
+// Yaoundé et Bafoussam restent sélectionnables mais afficheront qu'aucun
+// quartier n'est encore configuré tant que leur grille tarifaire n'existe pas.
+const AVAILABLE_CITIES = ["Douala", "Yaoundé", "Bafoussam"] as const;
+
 export default function CheckoutPage() {
   const { lines, isHydrated, clear } = useCart();
 
   const [products, setProducts] = useState<CartProductData[]>([]);
   const [zones, setZones] = useState<ShippingZone[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -91,6 +98,11 @@ export default function CheckoutPage() {
     () => zones.find((z) => z.id === shippingZoneId) ?? null,
     [zones, shippingZoneId]
   );
+
+  const zonesForSelectedCity = useMemo(
+    () => zones.filter((z) => z.city === selectedCity),
+    [zones, selectedCity]
+  );
   const shippingFee = receptionMethod === "DELIVERY" ? (selectedZone?.fee ?? 0) : 0;
   const estimatedTotal = subtotal + shippingFee;
 
@@ -135,9 +147,11 @@ export default function CheckoutPage() {
               Total : <strong className="text-brand-navy">{formatPrice(orderResult.total)}</strong>
             </p>
             <p className="mt-6 text-xs text-neutral-400">
-              Conservez ce numéro. Si vous étiez connecté, retrouvez cette
-              commande dans « Mon compte → Mes commandes ». Notre équipe
-              vous contactera au numéro fourni pour confirmer la suite.
+              Conservez ce numéro. Si vous n&rsquo;étiez pas connecté, un
+              compte vient d&rsquo;être créé pour vous — vérifiez votre
+              boîte mail pour définir votre mot de passe et suivre vos
+              commandes depuis « Mon compte ». Notre équipe vous contactera
+              au numéro fourni pour confirmer la suite.
             </p>
             <Link
               href="/categories"
@@ -269,7 +283,7 @@ export default function CheckoutPage() {
                     <div>
                       <input
                         {...register("customerEmail")}
-                        placeholder="Email (optionnel)"
+                        placeholder="Email (pour recevoir le suivi de votre commande)"
                         className="w-full rounded-lg border border-neutral-200 px-3 py-2.5 text-sm focus:border-brand-orange focus:outline-none"
                       />
                       {errors.customerEmail ? (
@@ -320,19 +334,45 @@ export default function CheckoutPage() {
                   {receptionMethod === "DELIVERY" ? (
                     <div className="mt-4 space-y-3">
                       <div>
+                        <label className="mb-1 block text-xs font-medium text-neutral-500">
+                          Ville
+                        </label>
                         <select
-                          {...register("shippingZoneId")}
-                          defaultValue=""
+                          value={selectedCity}
+                          onChange={(e) => {
+                            setSelectedCity(e.target.value);
+                            setValue("shippingZoneId", "");
+                          }}
                           className="w-full rounded-lg border border-neutral-200 px-3 py-2.5 text-sm focus:border-brand-orange focus:outline-none"
                         >
                           <option value="" disabled>
-                            Choisissez votre zone
+                            Choisissez votre ville
                           </option>
-                          {zones.map((zone) => (
+                          {AVAILABLE_CITIES.map((city) => (
+                            <option key={city} value={city}>
+                              {city}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-neutral-500">
+                          Quartier
+                        </label>
+                        <select
+                          {...register("shippingZoneId")}
+                          value={shippingZoneId ?? ""}
+                          onChange={(e) => setValue("shippingZoneId", e.target.value)}
+                          disabled={!selectedCity}
+                          className="w-full rounded-lg border border-neutral-200 px-3 py-2.5 text-sm focus:border-brand-orange focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-400"
+                        >
+                          <option value="" disabled>
+                            {selectedCity ? "Choisissez votre quartier" : "Sélectionnez d'abord une ville"}
+                          </option>
+                          {zonesForSelectedCity.map((zone) => (
                             <option key={zone.id} value={zone.id}>
-                              {zone.city}
-                              {zone.neighborhood ? ` — ${zone.neighborhood}` : ""} ·{" "}
-                              {formatPrice(zone.fee)}
+                              {zone.neighborhood} · {formatPrice(zone.fee)}
                             </option>
                           ))}
                         </select>
@@ -341,10 +381,10 @@ export default function CheckoutPage() {
                             {errors.shippingZoneId.message}
                           </p>
                         ) : null}
-                        {zones.length === 0 ? (
+                        {selectedCity && zonesForSelectedCity.length === 0 ? (
                           <p className="mt-1 text-xs text-neutral-400">
-                            Aucune zone de livraison n&rsquo;est configurée
-                            pour le moment.
+                            {selectedCity} n&rsquo;est pas encore desservie —
+                            contactez-nous pour une livraison sur devis.
                           </p>
                         ) : null}
                       </div>

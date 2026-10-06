@@ -262,6 +262,19 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["fulfillment_orders"]["Row"]>;
       };
+      wishlists: {
+        Row: {
+          id: string;
+          customer_id: string;
+          product_id: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["wishlists"]["Row"]> & {
+          customer_id: string;
+          product_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["wishlists"]["Row"]>;
+      };
       orders: {
         Row: {
           id: string;

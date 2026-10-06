@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";
 import { getCategoryBySlug, getProductsByCategory, listSubcategories, getBrandsInCategory } from "@/services/catalog.service";
+import { getWishlistProductIds } from "@/services/wishlist.service";
 import type { ProductSort } from "@/types/catalog";
 
 export const dynamic = "force-dynamic";
@@ -66,15 +67,18 @@ export default async function CategoryDetailPage({
   const page = Math.max(1, Number(resolvedSearchParams.page) || 1);
   const sort = isProductSort(resolvedSearchParams.sort) ? resolvedSearchParams.sort : "relevance";
 
-  const result = await getProductsByCategory({
-    categoryId: category.id,
-    subcategoryId: activeSubcategory?.id,
-    brandId: activeBrandId,
-    minPrice: Number.isFinite(minPrice) ? minPrice : undefined,
-    maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
-    page,
-    sort,
-  });
+  const [result, wishlistIds] = await Promise.all([
+    getProductsByCategory({
+      categoryId: category.id,
+      subcategoryId: activeSubcategory?.id,
+      brandId: activeBrandId,
+      minPrice: Number.isFinite(minPrice) ? minPrice : undefined,
+      maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
+      page,
+      sort,
+    }),
+    getWishlistProductIds(),
+  ]);
 
   const persistentParams =
     (sort !== "relevance" ? `&sort=${sort}` : "") +
@@ -208,7 +212,11 @@ export default async function CategoryDetailPage({
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {result.items.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isFavorite={wishlistIds.has(product.id)}
+                />
               ))}
             </div>
           )}

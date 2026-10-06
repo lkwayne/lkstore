@@ -334,11 +334,71 @@ base de test avec des données fictives une fois la migration appliquée.
 - Choix de sécurité assumé : par souci de ne pas permettre l'énumération des
   commandes, il n'existe pour l'instant aucune route qui relit une commande
   après coup — la confirmation (numéro, total) s'affiche directement depuis
-  la réponse de `create_order()` au moment du paiement. Le suivi de commande
-  par numéro (`/track-order`) arrivera avec le module Authentification.
+  la réponse de `create_order()` au moment du paiement.
+- **Correctif critique (`0011_fix_create_order_bugs.sql`)** : deux bugs
+  bloquaient entièrement le checkout (`operator does not exist: text ->>
+  unknown`) — réutilisation de l'opérateur jsonb `->>` sur une table déjà
+  typée, et une précédence d'opérateurs SQL incorrecte sur la concaténation
+  du nom du client. Les deux ont été reproduits, corrigés et revérifiés par
+  une vraie commande de test (créée puis supprimée) avant d'écrire la
+  migration — voir le fichier pour le détail technique.
+- **Livraison — sélection Ville puis Quartier** (`0012_douala_shipping_zones.sql`) :
+  le formulaire demande d'abord la ville, puis ne propose que les quartiers
+  de cette ville. Douala compte 47 quartiers réels sur 3 paliers de tarif
+  (1000 FCFA pour Bonamoussadi et son corridor jusqu'à Akwa, 1500 FCFA pour
+  les autres quartiers, 2000 FCFA pour les plus éloignés de Bonamoussadi).
+  Yaoundé et Bafoussam apparaissent dans le sélecteur mais n'ont aucun
+  quartier configuré — le formulaire l'indique clairement plutôt que
+  d'afficher une liste vide silencieuse. À compléter dès que leur grille
+  tarifaire est définie.
+
+## Création automatique de compte client (livré)
+
+- Dès qu'une commande **invitée** (client non connecté) est validée, un
+  compte Supabase Auth est créé automatiquement pour l'email fourni au
+  checkout — l'email est désormais **obligatoire** au checkout précisément
+  pour ça (`src/schemas/order.schema.ts`).
+- Un vrai email est envoyé via le service de mail intégré de Supabase Auth
+  (`resetPasswordForEmail`) : ce n'est pas un simulacre, l'email part
+  réellement et permet au client de définir son mot de passe. Limite
+  assumée : il s'agit du mailer par défaut de Supabase (quelques envois/heure
+  sur le plan actuel, template générique non personnalisé "SENDUU"). Pour un
+  vrai volume et un email à l'en-tête SENDUU, configurer un SMTP personnalisé
+  dans Supabase (Authentication → Email Templates / SMTP Settings) — aucun
+  changement de code requis, `src/services/customer-account.service.ts`
+  continuera de fonctionner tel quel.
+- Si un compte existe déjà pour cet email, rien n'est recréé ni réinitialisé
+  — le client garde son compte existant.
+- La commande est automatiquement rattachée (`customer_id`) au compte
+  fraîchement créé, pour apparaître immédiatement dans son historique
+  (`/account/orders`).
+- Un échec de création de compte ou d'envoi d'email ne fait jamais échouer
+  la commande elle-même, qui est déjà validée en base à ce stade.
+
+## Notifications WhatsApp — préparées, pas encore actives
+
+`src/services/whatsapp-notification.service.ts` contient l'intégration
+complète avec l'API Graph de Meta (WhatsApp Business Platform), mais
+**aucun message n'est envoyé tant que trois variables d'environnement ne
+sont pas renseignées** (`WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`,
+`WHATSAPP_ACCOUNT_TEMPLATE_NAME` — voir `.env.example`). Aucun envoi n'est
+simulé en attendant : la fonction retourne honnêtement `sent: false` avec la
+raison. Pour activer une fois le compte Meta approuvé :
+1. Créer et faire approuver par Meta un template de message "utility" (un
+   message business-initié hors fenêtre de 24h ne peut pas être du texte
+   libre — c'est une règle de la plateforme WhatsApp).
+2. Renseigner les trois variables d'environnement.
+3. Aucune autre modification de code n'est nécessaire — l'appel se déclenche
+   automatiquement dès la prochaine commande une fois ces variables présentes.
 
 ## Règle de non-simulation
 
 Aucune fonctionnalité externe (paiement, API fournisseur, WhatsApp, email,
 tracking) ne doit jamais être présentée comme fonctionnelle si elle n'est pas
 réellement connectée à un service réel avec des identifiants valides.
+
+## Favoris (wishlist)
+
+- Table `wishlists` protégée par RLS (`wishlists_owner_only`) : chaque client ne voit que ses favoris.
+- `WishlistButton` (cœur sur les cartes produit, bouton complet sur la fiche produit) avec mise à jour optimiste ; un visiteur non connecté est redirigé vers `/login`.
+- Page `/wishlist` : liste des favoris, du plus récent au plus ancien.

@@ -3,6 +3,13 @@
 import { checkoutSchema, type CheckoutInput } from "@/schemas/order.schema";
 import { getShippingZones, getStores } from "@/services/shipping.service";
 import { createOrder, type CreateOrderResult } from "@/services/order.service";
+import { getCurrentUser } from "@/services/auth.service";
+import { ensureCustomerAccount } from "@/services/customer-account.service";
+import {
+  isWhatsAppConfigured,
+  sendWhatsAppAccessMessage,
+} from "@/services/whatsapp-notification.service";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { CartLine } from "@/types/cart";
 import type { ShippingZone, Store } from "@/types/shipping";
 
@@ -34,9 +41,9 @@ export async function placeOrder(
     return { success: false, error: "Votre panier est vide." };
   }
 
+  let order: CreateOrderResult;
   try {
-    const order = await createOrder(parsed.data, items);
-    return { success: true, order };
+    order = await createOrder(parsed.data, items);
   } catch (err) {
     const message =
       err instanceof Error
@@ -44,4 +51,59 @@ export async function placeOrder(
         : "Une erreur est survenue lors de la création de votre commande.";
     return { success: false, error: message };
   }
+
+  // Commande créée avec succès : on tente ensuite la création de compte
+  // client et l'envoi des accès. Un échec ici ne doit jamais faire échouer
+  // la commande elle-même, qui est déjà validée en base à ce stade.
+  try {
+    await createAccountAndSendAccess(parsed.data, order);
+  } catch {
+    // Volontairement silencieux côté client — la commande reste un succès.
+    // Toute erreur ici serait de toute façon invisible pour l'acheteur et
+    // ne doit pas polluer son écran de confirmation.
+  }
+
+  return { success: true, order };
+}
+
+async function createAccountAndSendAccess(
+  input: CheckoutInput,
+  order: CreateOrderResult
+): Promise<void> {
+  const currentUser = await getCurrentUser();
+  if (currentUser) return; // déjà connecté — a déjà un compte
+
+  const result = await ensureCustomerAccount({
+    email: input.customerEmail,
+    firstName: input.customerFirstName,
+    lastName: input.customerLastName,
+    phone: input.customerPhone,
+  });
+
+  if (result.userId && result.isNewAccount) {
+    // Rattache la commande au compte fraîchement créé.
+    // Même contournement de typage que order-admin.service.ts : l'inférence
+    // de type de supabase-js échoue sur .update() pour cette table à
+    // travers ce client — la sécurité réelle vient du client service_role
+    // utilisé ici (bypass RLS), pas du typage TypeScript de cet appel.
+    interface OrdersUpdateBuilder {
+      update: (values: { customer_id: string }) => {
+        eq: (column: "id", value: string) => Promise<{ error: { message: string } | null }>;
+      };
+    }
+    const admin = createAdminClient();
+    const ordersTable = admin.from("orders") as unknown as OrdersUpdateBuilder;
+    await ordersTable.update({ customer_id: result.userId }).eq("id", order.orderId);
+  }
+
+  if (isWhatsAppConfigured()) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senduu.app";
+    await sendWhatsAppAccessMessage({
+      phone: input.customerPhone,
+      firstName: input.customerFirstName,
+      loginUrl: `${siteUrl}/login`,
+    });
+  }
+  // Si l'API WhatsApp n'est pas configurée, sendWhatsAppAccessMessage()
+  // n'est même pas appelée — aucun envoi simulé, aucune fausse promesse.
 }

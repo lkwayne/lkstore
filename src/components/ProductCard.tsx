@@ -3,8 +3,15 @@ import Link from "next/link";
 import type { ProductSummary } from "@/types/catalog";
 import { formatPrice } from "@/lib/format-price";
 import { StockBadge } from "@/components/StockBadge";
+import { WishlistButton } from "@/components/WishlistButton";
 
-export function ProductCard({ product }: { product: ProductSummary }) {
+export function ProductCard({
+  product,
+  isFavorite = false,
+}: {
+  product: ProductSummary;
+  isFavorite?: boolean;
+}) {
   const hasDiscount =
     product.compareAtPrice != null && product.compareAtPrice > product.price;
   const discountPercent = hasDiscount
@@ -37,11 +44,14 @@ export function ProductCard({ product }: { product: ProductSummary }) {
             -{discountPercent}%
           </span>
         ) : null}
-        {product.condition === "OCCASION" ? (
-          <span className="absolute right-2 top-2 rounded-full bg-brand-navy px-2 py-1 text-xs font-semibold text-white">
-            Occasion
-          </span>
-        ) : null}
+        <div className="absolute right-2 top-2 flex flex-col items-end gap-1.5">
+          <WishlistButton productId={product.id} initialIsFavorite={isFavorite} />
+          {product.condition === "OCCASION" ? (
+            <span className="rounded-full bg-brand-navy px-2 py-1 text-xs font-semibold text-white">
+              Occasion
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-3">

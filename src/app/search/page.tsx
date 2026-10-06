@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";
 import { searchProducts } from "@/services/catalog.service";
+import { getWishlistProductIds } from "@/services/wishlist.service";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,12 @@ export default async function SearchPage({
   const page = Math.max(1, Number(pageParam) || 1);
   const trimmedQuery = q.trim();
 
-  const result = trimmedQuery
-    ? await searchProducts({ query: trimmedQuery, page })
-    : { items: [], page: 1, pageSize: 12, totalCount: 0, totalPages: 1 };
+  const [result, wishlistIds] = await Promise.all([
+    trimmedQuery
+      ? searchProducts({ query: trimmedQuery, page })
+      : Promise.resolve({ items: [], page: 1, pageSize: 12, totalCount: 0, totalPages: 1 }),
+    getWishlistProductIds(),
+  ]);
 
   return (
     <>
@@ -60,7 +64,11 @@ export default async function SearchPage({
           {result.items.length > 0 ? (
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {result.items.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isFavorite={wishlistIds.has(product.id)}
+                />
               ))}
             </div>
           ) : null}

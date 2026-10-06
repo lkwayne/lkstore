@@ -5,8 +5,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { StockBadge } from "@/components/StockBadge";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { WishlistButton } from "@/components/WishlistButton";
 import { formatPrice } from "@/lib/format-price";
 import { getProductBySlug } from "@/services/catalog.service";
+import { getWishlistProductIds } from "@/services/wishlist.service";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +34,9 @@ export default async function ProductDetailPage({
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+
+  const wishlistIds = await getWishlistProductIds();
+  const isFavorite = wishlistIds.has(product.id);
 
   const hasDiscount =
     product.compareAtPrice != null && product.compareAtPrice > product.price;
@@ -177,6 +182,13 @@ export default async function ProductDetailPage({
                 productId={product.id}
                 stockQuantity={product.stockQuantity}
               />
+              <div className="mt-3">
+                <WishlistButton
+                  productId={product.id}
+                  initialIsFavorite={isFavorite}
+                  variant="full"
+                />
+              </div>
             </div>
           </div>
         </div>

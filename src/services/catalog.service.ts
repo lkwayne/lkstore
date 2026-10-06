@@ -12,7 +12,7 @@ import type {
 const DEFAULT_PAGE_SIZE = 12;
 
 // Sélection publique stricte : jamais cost_price, jamais de jointure fournisseur.
-const PRODUCT_SUMMARY_SELECT = `
+export const PRODUCT_SUMMARY_SELECT = `
   id, name, slug, price, compare_at_price, stock_quantity, condition,
   is_featured, is_new, is_best_seller, is_flash_deal, is_on_sale,
   brand:brands ( id, name, slug ),

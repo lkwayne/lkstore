@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";
 import { getProductsByFlag, type ProductFlag } from "@/services/catalog.service";
+import { getWishlistProductIds } from "@/services/wishlist.service";
 import type { ProductSort } from "@/types/catalog";
 
 const SORT_OPTIONS: { value: ProductSort; label: string }[] = [
@@ -33,7 +34,10 @@ export async function FlagProductsPage({
   const page = Math.max(1, Number(searchParams.page) || 1);
   const sort = isProductSort(searchParams.sort) ? searchParams.sort : "relevance";
 
-  const result = await getProductsByFlag({ flag, page, sort });
+  const [result, wishlistIds] = await Promise.all([
+    getProductsByFlag({ flag, page, sort }),
+    getWishlistProductIds(),
+  ]);
 
   const buildHref = (targetPage: number) =>
     `${basePath}?page=${targetPage}${sort !== "relevance" ? `&sort=${sort}` : ""}`;
@@ -76,7 +80,11 @@ export async function FlagProductsPage({
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {result.items.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isFavorite={wishlistIds.has(product.id)}
+                />
               ))}
             </div>
           )}

@@ -5,8 +5,21 @@ const validContact = {
   customerFirstName: "Jean",
   customerLastName: "Mballa",
   customerPhone: "690000000",
-  customerEmail: "",
+  customerEmail: "jean.mballa@example.com",
 };
+
+describe("checkoutSchema — email obligatoire", () => {
+  it("rejette un email vide", () => {
+    const result = checkoutSchema.safeParse({
+      ...validContact,
+      customerEmail: "",
+      receptionMethod: "STORE_PICKUP",
+      paymentMethod: "PAY_IN_STORE",
+      storeId: "e7d04ff6-2f34-4bf1-abc3-fbc10fa7d4a6",
+    });
+    expect(result.success).toBe(false);
+  });
+});
 
 describe("checkoutSchema", () => {
   it("exige une zone et une adresse pour une livraison", () => {
