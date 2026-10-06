@@ -54,3 +54,18 @@ body {
   background-clip: text;
   color: transparent;
 }
+
+/* Menu mobile en tiroir : fond qui s'estompe, panneau qui glisse depuis la gauche. */
+@keyframes drawer-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes drawer-panel-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.drawer-backdrop-in { animation: drawer-backdrop-in 180ms ease-out; }
+.drawer-panel-in { animation: drawer-panel-in 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .drawer-backdrop-in, .drawer-panel-in { animation: none; }
+}

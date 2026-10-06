@@ -102,8 +102,13 @@ export function HeaderClient({ menu }: { menu: MenuCategory[] }) {
     if (!mobileMenuOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
     };
   }, [mobileMenuOpen]);
   const { itemCount } = useCart();
@@ -249,22 +254,28 @@ export function HeaderClient({ menu }: { menu: MenuCategory[] }) {
   );
 
   const mobileMenu = mobileMenuOpen ? (
-    <div
-      className="fixed inset-0 z-[999] overflow-y-auto bg-white md:hidden"
-      style={{ backgroundColor: "#ffffff" }}
-    >
-      <div className="flex items-center justify-between border-b border-neutral-100 bg-white px-4 py-3">
-        <Image src="/brand/senduu-logo-header.png" alt="SENDUU" width={120} height={80} className="h-8 w-auto" />
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(false)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy"
-          aria-label="Fermer le menu"
-        >
-          <CloseIcon className="h-6 w-6" />
-        </button>
-      </div>
-      <ul className="flex flex-col divide-y divide-neutral-100 bg-white text-base font-medium text-brand-navy">
+    <div className="fixed inset-0 z-[999] md:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+      {/* Fond semi-transparent : la page reste visible derrière, un tap ferme le menu. */}
+      <button
+        type="button"
+        aria-label="Fermer le menu"
+        onClick={() => setMobileMenuOpen(false)}
+        className="drawer-backdrop-in absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+      />
+      {/* Panneau latéral : ne couvre qu'une partie de l'écran. */}
+      <nav className="drawer-panel-in absolute inset-y-0 left-0 flex w-[80%] max-w-xs flex-col overflow-y-auto rounded-r-3xl bg-white/95 shadow-2xl backdrop-blur-md">
+        <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-3">
+          <Image src="/brand/senduu-logo-header.png" alt="SENDUU" width={120} height={80} className="h-8 w-auto" />
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy"
+            aria-label="Fermer le menu"
+          >
+            <CloseIcon className="h-6 w-6" />
+          </button>
+        </div>
+      <ul className="flex flex-col divide-y divide-neutral-100 text-base font-medium text-brand-navy">
         {MAIN_NAV.map((item) =>
           item.href === "/categories" && menu.length > 0 ? (
             <li key={item.href}>
@@ -326,6 +337,7 @@ export function HeaderClient({ menu }: { menu: MenuCategory[] }) {
           </Link>
         </li>
       </ul>
+      </nav>
     </div>
   ) : null;
 
