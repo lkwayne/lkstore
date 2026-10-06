@@ -6,6 +6,7 @@
 
 export const USER_ROLES = [
   "CUSTOMER",
+  "SUPER_ADMIN",
   "ADMIN",
   "MANAGER",
   "LOGISTICS",
@@ -13,6 +14,16 @@ export const USER_ROLES = [
   "MARKETING",
 ] as const;
 export type UserRole = (typeof USER_ROLES)[number];
+
+export const ROLE_LABELS: Record<UserRole, string> = {
+  SUPER_ADMIN: "Super administrateur",
+  ADMIN: "Administrateur",
+  MANAGER: "Manager",
+  LOGISTICS: "Logistique",
+  CUSTOMER_SUPPORT: "Support client",
+  MARKETING: "Marketing",
+  CUSTOMER: "Client",
+};
 
 export const STAFF_ROLES = USER_ROLES.filter((r) => r !== "CUSTOMER");
 

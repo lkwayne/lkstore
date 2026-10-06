@@ -433,3 +433,9 @@ réellement connectée à un service réel avec des identifiants valides.
 - **Limitation de débit** (`src/lib/rate-limit.ts`, migration `0016`) : table `rate_limits` + fonction `rate_limit_hit`, accessibles uniquement au service_role. Limites actuelles : connexion 20 / 15 min par IP et 8 / 15 min par email ; inscription 5 / h par IP ; commande 10 / h par IP et 5 / h par téléphone ; suivi de commande 10 / 10 min par IP. Si le limiteur tombe en panne, les requêtes passent (une commande ne doit jamais être bloquée par un incident technique).
 - **Garde admin** : toutes les actions d'administration appellent `requireStaff()` (`auth.service.ts`) avant toute opération, en plus des règles RLS.
 - **Migration `0015`** : tables de compteurs verrouillées (RLS) et fonctions internes non appelables depuis l'extérieur.
+
+## Équipe et rôles
+
+- Rôle **SUPER_ADMIN** (migration `0017`) : seul à voir la page `/admin/team`. Il crée les comptes du staff (mot de passe provisoire généré, affiché une seule fois), attribue ou retire les rôles et peut nommer d'autres super administrateurs.
+- Garde-fous : on ne peut pas modifier son propre rôle ; la base refuse de retirer le dernier super administrateur ; chaque changement est écrit dans `audit_logs`.
+- Les rôles staff (ADMIN, MANAGER, LOGISTICS, CUSTOMER_SUPPORT, MARKETING) donnent pour l'instant le même accès au back-office. Des droits distincts par rôle restent à faire.

@@ -141,6 +141,7 @@ export interface Database {
           phone: string | null;
           role:
             | "CUSTOMER"
+            | "SUPER_ADMIN"
             | "ADMIN"
             | "MANAGER"
             | "LOGISTICS"

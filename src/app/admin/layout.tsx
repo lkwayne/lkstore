@@ -69,6 +69,13 @@ export default async function AdminLayout({
                 Dropshipping
               </Link>
             </li>
+            {currentUser.profile?.role === "SUPER_ADMIN" ? (
+              <li>
+                <Link href="/admin/team" className="hover:text-brand-navy">
+                  Équipe
+                </Link>
+              </li>
+            ) : null}
           </ul>
         </nav>
       </header>

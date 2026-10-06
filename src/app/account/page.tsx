@@ -3,15 +3,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SignOutButton } from "@/components/SignOutButton";
 import { getCurrentUser, isStaffRole } from "@/services/auth.service";
+import { ROLE_LABELS } from "@/config/enums";
 
-const ROLE_LABELS: Record<string, string> = {
-  ADMIN: "Administrateur",
-  MANAGER: "Manager",
-  LOGISTICS: "Logistique",
-  CUSTOMER_SUPPORT: "Support client",
-  MARKETING: "Marketing",
-  CUSTOMER: "Client",
-};
 
 export default async function AccountPage() {
   const currentUser = await getCurrentUser();

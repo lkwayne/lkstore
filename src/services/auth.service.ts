@@ -46,3 +46,12 @@ export async function requireStaff(): Promise<CurrentUser> {
   }
   return user;
 }
+
+/** Réservé aux super administrateurs (gestion de l'équipe et des rôles). */
+export async function requireSuperAdmin(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user || user.profile?.role !== "SUPER_ADMIN") {
+    throw new Error("Action réservée aux super administrateurs.");
+  }
+  return user;
+}
