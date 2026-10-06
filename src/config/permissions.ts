@@ -33,7 +33,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   SUPER_ADMIN: [...MANAGERS, "team.manage"],
   ADMIN: MANAGERS,
   MANAGER: MANAGERS,
-  LOGISTICS: ["dashboard.view", "orders.manage", "fulfillment.manage"],
+  LOGISTICS: ["dashboard.view", "orders.manage", "fulfillment.manage", "shipping.manage"],
   CUSTOMER_SUPPORT: ["dashboard.view", "orders.manage", "reviews.moderate"],
   MARKETING: ["dashboard.view", "catalog.manage", "reviews.moderate"],
   CUSTOMER: [],

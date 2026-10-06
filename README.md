@@ -448,7 +448,7 @@ réellement connectée à un service réel avec des identifiants valides.
 |---|---|
 | SUPER_ADMIN | tout, y compris l'équipe |
 | ADMIN, MANAGER | tout sauf l'équipe (coûts, marges, fournisseurs inclus) |
-| LOGISTICS | commandes, dropshipping ; pas de coûts ni de catalogue |
+| LOGISTICS | commandes, dropshipping, zones et tarifs de livraison ; pas de coûts ni de catalogue |
 | CUSTOMER_SUPPORT | commandes, avis ; pas de finance |
 | MARKETING | catalogue (produits, catégories, médias), avis ; pas de commandes, coûts ni fournisseurs |
 
@@ -480,4 +480,4 @@ Les droits sont appliqués trois fois : menu, garde des pages/actions (`guardPag
 
 ## Gestion de la livraison (admin)
 
-`/admin/shipping` (permission `shipping.manage`, réservée à ADMIN / MANAGER / SUPER_ADMIN comme la RLS de `shipping_zones`) : modifier le tarif, le délai, le paiement à la livraison et l'activation de chaque quartier, et ajouter un quartier ou une ville. Pas de suppression : on désactive, pour ne rien casser côté historique. Les changements s'appliquent tout de suite au paiement.
+`/admin/shipping` (permission `shipping.manage`, ADMIN / MANAGER / SUPER_ADMIN / LOGISTICS, aligné sur la RLS de `shipping_zones` (migration 0023)) : modifier le tarif, le délai, le paiement à la livraison et l'activation de chaque quartier, et ajouter un quartier ou une ville. Pas de suppression : on désactive, pour ne rien casser côté historique. Les changements s'appliquent tout de suite au paiement.

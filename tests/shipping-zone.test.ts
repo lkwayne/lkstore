@@ -19,11 +19,11 @@ describe("shippingZoneSchema", () => {
 });
 
 describe("permission shipping.manage", () => {
-  it("réservée aux admins, managers et super admins (comme la RLS)", () => {
+  it("admins, managers, super admins et logistique (comme la RLS)", () => {
     expect(can("SUPER_ADMIN", "shipping.manage")).toBe(true);
     expect(can("ADMIN", "shipping.manage")).toBe(true);
     expect(can("MANAGER", "shipping.manage")).toBe(true);
-    expect(can("LOGISTICS", "shipping.manage")).toBe(false);
+    expect(can("LOGISTICS", "shipping.manage")).toBe(true);
     expect(can("MARKETING", "shipping.manage")).toBe(false);
     expect(can("CUSTOMER", "shipping.manage")).toBe(false);
   });
