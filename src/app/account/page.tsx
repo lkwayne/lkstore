@@ -21,9 +21,15 @@ export default async function AccountPage() {
             </p>
             <Link
               href="/login"
-              className="bg-brand-gradient mt-6 inline-flex items-center justify-center rounded-full px-7 py-3 text-sm font-semibold text-white"
+              className="bg-brand-gradient mt-6 flex w-full max-w-xs mx-auto items-center justify-center rounded-full px-7 py-3 text-sm font-semibold text-white"
             >
               Se connecter
+            </Link>
+            <Link
+              href="/register"
+              className="mt-3 flex w-full max-w-xs mx-auto items-center justify-center rounded-full border-2 border-brand-orange px-7 py-3 text-sm font-semibold text-brand-orange"
+            >
+              Créer un compte
             </Link>
           </div>
         </main>

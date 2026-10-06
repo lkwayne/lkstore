@@ -453,3 +453,7 @@ réellement connectée à un service réel avec des identifiants valides.
 Les droits sont appliqués trois fois : menu, garde des pages/actions (`guardPage`, `requirePermission`) et **policies RLS** en base (fonctions `can_manage_orders`, `can_edit_catalog`, `can_moderate_reviews`, `can_handle_fulfillment`, `is_admin_or_manager`). Modifier le fichier TypeScript seul ne donne jamais plus d'accès que la base ne l'autorise.
 
 **Prix d'achat** : `products.cost_price` n'est plus lisible par `anon`/`authenticated` (grants par colonne). Le back-office le lit avec la clé service, pour les rôles `costs.view` uniquement. Toute nouvelle colonne de `products` doit recevoir `grant select (colonne) on products to anon, authenticated`, sinon la boutique ne pourra pas la lire.
+
+## Règle importante : `Header` et pages clientes
+
+`Header` est un composant **serveur asynchrone** (il charge le méga-menu). Il ne doit **jamais** être importé dans un fichier `"use client"` : la page ne devient alors pas interactive (boutons sans effet). Les pages interactives (connexion, inscription, panier, paiement, mot de passe) sont donc découpées en `page.tsx` (serveur, rend `<Header />`) + `client.tsx` (formulaire, reçoit `header` en prop).
