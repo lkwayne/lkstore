@@ -8,6 +8,7 @@ import { AddToCartButton } from "@/components/AddToCartButton";
 import { WishlistButton } from "@/components/WishlistButton";
 import { formatPrice } from "@/lib/format-price";
 import { getProductBySlug } from "@/services/catalog.service";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { getWishlistProductIds } from "@/services/wishlist.service";
 
 export const dynamic = "force-dynamic";
@@ -191,6 +192,8 @@ export default async function ProductDetailPage({
               </div>
             </div>
           </div>
+
+          <ReviewsSection productId={product.id} productSlug={product.slug} />
         </div>
       </main>
       <Footer />

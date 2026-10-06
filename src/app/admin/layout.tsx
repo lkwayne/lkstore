@@ -60,6 +60,11 @@ export default async function AdminLayout({
               </Link>
             </li>
             <li>
+              <Link href="/admin/reviews" className="hover:text-brand-navy">
+                Avis
+              </Link>
+            </li>
+            <li>
               <Link href="/admin/fulfillment" className="hover:text-brand-navy">
                 Dropshipping
               </Link>

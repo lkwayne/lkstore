@@ -402,3 +402,9 @@ réellement connectée à un service réel avec des identifiants valides.
 - Table `wishlists` protégée par RLS (`wishlists_owner_only`) : chaque client ne voit que ses favoris.
 - `WishlistButton` (cœur sur les cartes produit, bouton complet sur la fiche produit) avec mise à jour optimiste ; un visiteur non connecté est redirigé vers `/login`.
 - Page `/wishlist` : liste des favoris, du plus récent au plus ancien.
+
+## Avis clients
+
+- Migration `0013_reviews.sql` : un avis par client et produit, réservé aux acheteurs d'une commande `DELIVERED`/`COMPLETED`, toujours créé « en attente » (trigger `enforce_review_rules`, le client ne peut pas s'auto-approuver).
+- Fiche produit : note moyenne, liste des avis approuvés (prénom + initiale), formulaire pour les acheteurs.
+- Admin : `/admin/reviews` pour approuver, masquer ou supprimer.
