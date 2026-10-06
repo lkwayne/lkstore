@@ -1,9 +1,11 @@
 import { listFulfillmentOrders } from "@/services/supplier-admin.service";
 import { FulfillmentRowEditor } from "@/components/admin/FulfillmentRowEditor";
+import { guardPage } from "@/services/auth.service";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminFulfillmentPage() {
+  await guardPage("fulfillment.manage");
   const items = await listFulfillmentOrders();
 
   return (

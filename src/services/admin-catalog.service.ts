@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ProductInput } from "@/schemas/product.schema";
 
 export interface AdminProductListItem {
@@ -60,12 +61,15 @@ export async function listProductsForAdmin(): Promise<AdminProductListItem[]> {
   });
 }
 
-export async function getProductForEdit(id: string): Promise<AdminProductDetail | null> {
+export async function getProductForEdit(
+  id: string,
+  includeCost = false
+): Promise<AdminProductDetail | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, name, slug, sku, condition, description, brand_id, category_id, subcategory_id, price, compare_at_price, cost_price, stock_quantity, low_stock_threshold, fulfillment_type, cod_available, store_pickup_available, status, is_featured, is_new, is_best_seller, is_flash_deal, is_on_sale"
+      "id, name, slug, sku, condition, description, brand_id, category_id, subcategory_id, price, compare_at_price, stock_quantity, low_stock_threshold, fulfillment_type, cod_available, store_pickup_available, status, is_featured, is_new, is_best_seller, is_flash_deal, is_on_sale"
     )
     .eq("id", id)
     .maybeSingle();
@@ -76,6 +80,26 @@ export async function getProductForEdit(id: string): Promise<AdminProductDetail 
   if (!data) return null;
 
   const r = data as unknown as Record<string, unknown>;
+
+  // Le prix d'achat n'est plus lisible par les rôles anon/authenticated
+  // (migration 0018) : on le lit avec la clé service, uniquement pour les
+  // rôles autorisés (le contrôle est fait par l'appelant : permission costs.view).
+  let costPrice: number | null = null;
+  if (includeCost) {
+    const admin = createAdminClient();
+    const { data: costRow } = await (admin.from("products") as unknown as {
+      select: (c: string) => {
+        eq: (c: string, v: string) => {
+          maybeSingle: () => Promise<{ data: { cost_price: number | null } | null }>;
+        };
+      };
+    })
+      .select("cost_price")
+      .eq("id", id)
+      .maybeSingle();
+    costPrice = costRow?.cost_price != null ? Number(costRow.cost_price) : null;
+  }
+
   return {
     id: r.id as string,
     name: r.name as string,
@@ -88,7 +112,7 @@ export async function getProductForEdit(id: string): Promise<AdminProductDetail 
     subcategoryId: r.subcategory_id as string | null,
     price: Number(r.price),
     compareAtPrice: r.compare_at_price != null ? Number(r.compare_at_price) : null,
-    costPrice: r.cost_price != null ? Number(r.cost_price) : null,
+    costPrice,
     stockQuantity: r.stock_quantity as number,
     lowStockThreshold: r.low_stock_threshold as number,
     fulfillmentType: r.fulfillment_type as ProductInput["fulfillmentType"],
@@ -113,8 +137,8 @@ export async function getBrands(): Promise<BrandOption[]> {
   return data ?? [];
 }
 
-function toRow(input: ProductInput) {
-  return {
+function toRow(input: ProductInput, includeCost: boolean) {
+  const row: Record<string, unknown> = {
     name: input.name,
     slug: input.slug,
     sku: input.sku,
@@ -125,7 +149,6 @@ function toRow(input: ProductInput) {
     subcategory_id: input.subcategoryId || null,
     price: input.price,
     compare_at_price: input.compareAtPrice ?? null,
-    cost_price: input.costPrice ?? null,
     stock_quantity: input.stockQuantity,
     low_stock_threshold: input.lowStockThreshold,
     fulfillment_type: input.fulfillmentType,
@@ -138,6 +161,9 @@ function toRow(input: ProductInput) {
     is_flash_deal: input.isFlashDeal,
     is_on_sale: input.isOnSale,
   };
+  // Un rôle sans droit « costs.view » ne touche jamais au prix d'achat.
+  if (includeCost) row.cost_price = input.costPrice ?? null;
+  return row;
 }
 
 /**
@@ -157,11 +183,11 @@ interface ProductsWriteBuilder {
   };
 }
 
-export async function createProduct(input: ProductInput): Promise<string> {
+export async function createProduct(input: ProductInput, includeCost = false): Promise<string> {
   const supabase = await createClient();
   const table = supabase.from("products") as unknown as ProductsWriteBuilder;
 
-  const { data, error } = await table.insert(toRow(input)).select("id").single();
+  const { data, error } = await table.insert(toRow(input, includeCost)).select("id").single();
   if (error) {
     throw new Error(`Impossible de créer le produit : ${error.message}`);
   }
@@ -174,11 +200,15 @@ export async function createProduct(input: ProductInput): Promise<string> {
   return productId;
 }
 
-export async function updateProduct(id: string, input: ProductInput): Promise<void> {
+export async function updateProduct(
+  id: string,
+  input: ProductInput,
+  includeCost = false
+): Promise<void> {
   const supabase = await createClient();
   const table = supabase.from("products") as unknown as ProductsWriteBuilder;
 
-  const { error } = await table.update(toRow(input)).eq("id", id);
+  const { error } = await table.update(toRow(input, includeCost)).eq("id", id);
   if (error) {
     throw new Error(`Impossible de mettre à jour le produit : ${error.message}`);
   }

@@ -6,12 +6,14 @@ import {
   getLinkedProducts,
 } from "@/services/supplier-admin.service";
 import { getProductOptions } from "@/services/admin-catalog.service";
+import { guardPage } from "@/services/auth.service";
 
 export default async function EditSupplierPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await guardPage("suppliers.manage");
   const { id } = await params;
   const supplier = await getSupplierForEdit(id);
   if (!supplier) notFound();

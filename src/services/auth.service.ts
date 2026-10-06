@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import type { Database } from "@/types/database";
+import { can, type Permission } from "@/config/permissions";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -53,5 +55,21 @@ export async function requireSuperAdmin(): Promise<CurrentUser> {
   if (!user || user.profile?.role !== "SUPER_ADMIN") {
     throw new Error("Action réservée aux super administrateurs.");
   }
+  return user;
+}
+
+/** Garde pour les actions serveur : staff ET possédant la permission demandée. */
+export async function requirePermission(permission: Permission): Promise<CurrentUser> {
+  const user = await requireStaff();
+  if (!can(user.profile?.role, permission)) {
+    throw new Error("Votre rôle n'a pas accès à cette fonction.");
+  }
+  return user;
+}
+
+/** Garde pour les pages du back-office : redirige vers /admin si non autorisé. */
+export async function guardPage(permission: Permission): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user || !can(user.profile?.role, permission)) redirect("/admin");
   return user;
 }

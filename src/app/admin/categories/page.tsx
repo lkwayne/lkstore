@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { listCategoriesForAdmin } from "@/services/admin-category.service";
+import { guardPage } from "@/services/auth.service";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCategoriesPage() {
+  await guardPage("catalog.manage");
   const categories = await listCategoriesForAdmin();
 
   return (

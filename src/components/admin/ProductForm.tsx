@@ -59,9 +59,11 @@ const inputClass =
 export function ProductForm({
   productId,
   defaultValues,
+  canEditCosts = false,
 }: {
   productId?: string;
   defaultValues?: ProductInput;
+  canEditCosts?: boolean;
 }) {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -275,6 +277,7 @@ export function ProductForm({
           </p>
         ) : null}
 
+        {canEditCosts ? (
         <Field label="Coût d'achat — interne, jamais visible du client" htmlFor="costPrice">
           <input
             id="costPrice"
@@ -285,6 +288,7 @@ export function ProductForm({
             className={inputClass}
           />
         </Field>
+        ) : null}
       </fieldset>
 
       <fieldset className="space-y-3">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listSuppliers } from "@/services/supplier-admin.service";
+import { guardPage } from "@/services/auth.service";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default async function AdminSuppliersPage() {
+  await guardPage("suppliers.manage");
   const suppliers = await listSuppliers();
 
   return (

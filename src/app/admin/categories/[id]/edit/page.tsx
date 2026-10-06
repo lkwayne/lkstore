@@ -5,12 +5,14 @@ import {
   getCategoryForEdit,
   getSubcategoriesForAdmin,
 } from "@/services/admin-category.service";
+import { guardPage } from "@/services/auth.service";
 
 export default async function EditCategoryPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await guardPage("catalog.manage");
   const { id } = await params;
   const category = await getCategoryForEdit(id);
   if (!category) notFound();

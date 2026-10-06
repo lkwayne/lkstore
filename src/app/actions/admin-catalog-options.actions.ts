@@ -1,6 +1,6 @@
 "use server";
 
-import { requireStaff } from "@/services/auth.service";
+import { requirePermission } from "@/services/auth.service";
 import { getCategories } from "@/services/catalog.service";
 import { getBrands } from "@/services/admin-catalog.service";
 import { createClient } from "@/lib/supabase/server";
@@ -12,7 +12,7 @@ export interface SubcategoryOption {
 }
 
 export async function getProductFormOptions() {
-  await requireStaff();
+  await requirePermission("catalog.manage");
   const [categories, brands] = await Promise.all([getCategories(), getBrands()]);
 
   const supabase = await createClient();

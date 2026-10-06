@@ -3,10 +3,12 @@ import Link from "next/link";
 import { listProductsForAdmin } from "@/services/admin-catalog.service";
 import { StockAndStatusEditor } from "@/components/admin/StockAndStatusEditor";
 import { formatPrice } from "@/lib/format-price";
+import { guardPage } from "@/services/auth.service";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
+  await guardPage("catalog.manage");
   const products = await listProductsForAdmin();
 
   return (

@@ -1,10 +1,12 @@
 import { listReviewsForModeration } from "@/services/review.service";
 import { StarRating } from "@/components/StarRating";
 import { ReviewModerationButtons } from "@/components/admin/ReviewModerationButtons";
+import { guardPage } from "@/services/auth.service";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminReviewsPage() {
+  await guardPage("reviews.moderate");
   const reviews = await listReviewsForModeration();
   const pendingCount = reviews.filter((r) => !r.isApproved).length;
 

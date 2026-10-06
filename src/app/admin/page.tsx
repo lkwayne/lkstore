@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/services/admin-stats.service";
+import { getCurrentUser } from "@/services/auth.service";
+import { can } from "@/config/permissions";
 import { formatPrice } from "@/lib/format-price";
 import { ORDER_STATUSES, type OrderStatus } from "@/config/enums";
 
@@ -31,6 +33,9 @@ function StatCard({ label, value, hint }: { label: string; value: string; hint?:
 }
 
 export default async function AdminDashboardPage() {
+  const user = await getCurrentUser();
+  const showFinance = can(user?.profile?.role, "dashboard.finance");
+  const showOrders = can(user?.profile?.role, "orders.manage");
   const stats = await getDashboardStats();
 
   return (
@@ -41,13 +46,17 @@ export default async function AdminDashboardPage() {
       </p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard
-          label="Chiffre d'affaires"
-          value={formatPrice(stats.totalRevenue)}
-          hint="Hors commandes annulées/retournées"
-        />
-        <StatCard label="Commandes" value={String(stats.orderCount)} />
-        <StatCard label="Panier moyen" value={formatPrice(stats.averageBasket)} />
+        {showFinance ? (
+          <StatCard
+            label="Chiffre d'affaires"
+            value={formatPrice(stats.totalRevenue)}
+            hint="Hors commandes annulées/retournées"
+          />
+        ) : null}
+        {showOrders ? <StatCard label="Commandes" value={String(stats.orderCount)} /> : null}
+        {showFinance ? (
+          <StatCard label="Panier moyen" value={formatPrice(stats.averageBasket)} />
+        ) : null}
         <StatCard
           label="Stock faible"
           value={String(stats.lowStockCount)}
@@ -56,6 +65,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        {showOrders ? (
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
           <h2 className="text-sm font-semibold text-brand-navy">
             Commandes par statut
@@ -82,6 +92,9 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
 
+        ) : null}
+
+        {showFinance ? (
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
           <h2 className="text-sm font-semibold text-brand-navy">Meilleures ventes</h2>
           {stats.topProducts.length === 0 ? (
@@ -107,6 +120,7 @@ export default async function AdminDashboardPage() {
             Gérer les produits →
           </Link>
         </div>
+        ) : null}
       </div>
     </div>
   );

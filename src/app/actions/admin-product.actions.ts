@@ -1,6 +1,7 @@
 "use server";
 
-import { requireStaff } from "@/services/auth.service";
+import { requirePermission } from "@/services/auth.service";
+import { can } from "@/config/permissions";
 import { revalidatePath } from "next/cache";
 import { productSchema, type ProductInput } from "@/schemas/product.schema";
 import {
@@ -22,8 +23,8 @@ export async function saveNewProduct(input: ProductInput): Promise<SaveProductRe
   }
   let productId: string;
   try {
-    await requireStaff();
-    productId = await createProduct(parsed.data);
+    const user = await requirePermission("catalog.manage");
+    productId = await createProduct(parsed.data, can(user.profile?.role, "costs.view"));
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
   }
@@ -40,8 +41,8 @@ export async function saveExistingProduct(
     return { success: false, error: "Certains champs du formulaire sont invalides." };
   }
   try {
-    await requireStaff();
-    await updateProduct(id, parsed.data);
+    const user = await requirePermission("catalog.manage");
+    await updateProduct(id, parsed.data, can(user.profile?.role, "costs.view"));
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
   }
@@ -58,7 +59,7 @@ export async function changeProductStock(
     return { success: false, error: "Quantité invalide." };
   }
   try {
-    await requireStaff();
+    await requirePermission("catalog.manage");
     await setProductStock(id, stockQuantity);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };
@@ -72,7 +73,7 @@ export async function changeProductStatus(
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
 ): Promise<AdminActionResult> {
   try {
-    await requireStaff();
+    await requirePermission("catalog.manage");
     await setProductStatus(id, status);
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur inconnue." };

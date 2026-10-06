@@ -2,6 +2,18 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser, isStaffRole } from "@/services/auth.service";
 import { SignOutButton } from "@/components/SignOutButton";
+import { can, type Permission } from "@/config/permissions";
+
+const NAV_ITEMS: { href: string; label: string; permission: Permission }[] = [
+  { href: "/admin", label: "Tableau de bord", permission: "dashboard.view" },
+  { href: "/admin/orders", label: "Commandes", permission: "orders.manage" },
+  { href: "/admin/categories", label: "Catégories", permission: "catalog.manage" },
+  { href: "/admin/products", label: "Produits", permission: "catalog.manage" },
+  { href: "/admin/suppliers", label: "Fournisseurs", permission: "suppliers.manage" },
+  { href: "/admin/reviews", label: "Avis", permission: "reviews.moderate" },
+  { href: "/admin/fulfillment", label: "Dropshipping", permission: "fulfillment.manage" },
+  { href: "/admin/team", label: "Équipe", permission: "team.manage" },
+];
 
 export default async function AdminLayout({
   children,
@@ -34,48 +46,15 @@ export default async function AdminLayout({
         </div>
         <nav className="mx-auto max-w-6xl px-4 pb-3 sm:px-6">
           <ul className="flex gap-4 text-sm font-medium text-neutral-500">
-            <li>
-              <Link href="/admin" className="hover:text-brand-navy">
-                Tableau de bord
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/orders" className="hover:text-brand-navy">
-                Commandes
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/categories" className="hover:text-brand-navy">
-                Catégories
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/products" className="hover:text-brand-navy">
-                Produits
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/suppliers" className="hover:text-brand-navy">
-                Fournisseurs
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/reviews" className="hover:text-brand-navy">
-                Avis
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/fulfillment" className="hover:text-brand-navy">
-                Dropshipping
-              </Link>
-            </li>
-            {currentUser.profile?.role === "SUPER_ADMIN" ? (
-              <li>
-                <Link href="/admin/team" className="hover:text-brand-navy">
-                  Équipe
-                </Link>
-              </li>
-            ) : null}
+            {NAV_ITEMS.filter((item) => can(currentUser.profile?.role, item.permission)).map(
+              (item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-brand-navy">
+                    {item.label}
+                  </Link>
+                </li>
+              )
+            )}
           </ul>
         </nav>
       </header>

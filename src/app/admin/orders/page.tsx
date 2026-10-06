@@ -1,6 +1,7 @@
 import { listOrdersForAdmin } from "@/services/order-admin.service";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { formatPrice } from "@/lib/format-price";
+import { guardPage } from "@/services/auth.service";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ const RECEPTION_LABELS: Record<string, string> = {
 };
 
 export default async function AdminOrdersPage() {
+  await guardPage("orders.manage");
   const orders = await listOrdersForAdmin();
 
   return (

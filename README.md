@@ -439,3 +439,17 @@ réellement connectée à un service réel avec des identifiants valides.
 - Rôle **SUPER_ADMIN** (migration `0017`) : seul à voir la page `/admin/team`. Il crée les comptes du staff (mot de passe provisoire généré, affiché une seule fois), attribue ou retire les rôles et peut nommer d'autres super administrateurs.
 - Garde-fous : on ne peut pas modifier son propre rôle ; la base refuse de retirer le dernier super administrateur ; chaque changement est écrit dans `audit_logs`.
 - Les rôles staff (ADMIN, MANAGER, LOGISTICS, CUSTOMER_SUPPORT, MARKETING) donnent pour l'instant le même accès au back-office. Des droits distincts par rôle restent à faire.
+
+### Droits par rôle (migration `0018`, `src/config/permissions.ts`)
+
+| Rôle | Accès |
+|---|---|
+| SUPER_ADMIN | tout, y compris l'équipe |
+| ADMIN, MANAGER | tout sauf l'équipe (coûts, marges, fournisseurs inclus) |
+| LOGISTICS | commandes, dropshipping ; pas de coûts ni de catalogue |
+| CUSTOMER_SUPPORT | commandes, avis ; pas de finance |
+| MARKETING | catalogue (produits, catégories, médias), avis ; pas de commandes, coûts ni fournisseurs |
+
+Les droits sont appliqués trois fois : menu, garde des pages/actions (`guardPage`, `requirePermission`) et **policies RLS** en base (fonctions `can_manage_orders`, `can_edit_catalog`, `can_moderate_reviews`, `can_handle_fulfillment`, `is_admin_or_manager`). Modifier le fichier TypeScript seul ne donne jamais plus d'accès que la base ne l'autorise.
+
+**Prix d'achat** : `products.cost_price` n'est plus lisible par `anon`/`authenticated` (grants par colonne). Le back-office le lit avec la clé service, pour les rôles `costs.view` uniquement. Toute nouvelle colonne de `products` doit recevoir `grant select (colonne) on products to anon, authenticated`, sinon la boutique ne pourra pas la lire.
