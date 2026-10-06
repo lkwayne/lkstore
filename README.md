@@ -419,3 +419,11 @@ réellement connectée à un service réel avec des identifiants valides.
 
 - `/contact` : boutons WhatsApp / appel / email lus depuis `NEXT_PUBLIC_SUPPORT_WHATSAPP|PHONE|EMAIL|HOURS`. Un canal non renseigné n'est pas affiché ; aucun formulaire factice n'est proposé (pas d'envoi d'email tant que le mail pro n'existe pas).
 - `/track-order` : numéro de commande **+ téléphone** (9 derniers chiffres) via la fonction SQL `track_order` (migration `0014`, appliquée). Ne renvoie que statut, articles et total — jamais adresse, email ni identité. Réponse identique pour « commande inconnue » et « mauvais téléphone ».
+
+## Mot de passe oublié / lien d'accès client
+
+- `/forgot-password` : demande d'un lien par email (réponse identique que le compte existe ou non).
+- `/reset-password` : le client choisit un mot de passe (8 caractères min.), puis est connecté automatiquement.
+- Flux Supabase « implicit » volontaire : le lien fonctionne même ouvert dans un autre navigateur que celui de la demande (appli mail sur mobile).
+- Le lien d'accès envoyé après un achat (création auto du compte) pointe maintenant vers `/reset-password` (il pointait vers `/login`, où rien ne permettait de définir un mot de passe).
+- Prérequis Supabase : la Site URL et `https://<site>/**` dans Redirect URLs (déjà configurés).

@@ -73,9 +73,16 @@ export async function ensureCustomerAccount(params: {
 
   const userId = createData.user?.id ?? null;
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senduu.app";
+  // Le lien d'accès mène à /reset-password : le client y choisit son mot de
+  // passe, puis est connecté automatiquement.
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000")
+  ).replace(/\/$/, "");
   const { error: emailError } = await admin.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/login`,
+    redirectTo: `${siteUrl}/reset-password`,
   });
 
   if (emailError) {
