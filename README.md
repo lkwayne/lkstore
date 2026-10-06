@@ -408,3 +408,9 @@ réellement connectée à un service réel avec des identifiants valides.
 - Migration `0013_reviews.sql` : un avis par client et produit, réservé aux acheteurs d'une commande `DELIVERED`/`COMPLETED`, toujours créé « en attente » (trigger `enforce_review_rules`, le client ne peut pas s'auto-approuver).
 - Fiche produit : note moyenne, liste des avis approuvés (prénom + initiale), formulaire pour les acheteurs.
 - Admin : `/admin/reviews` pour approuver, masquer ou supprimer.
+
+## Méga-menu des catégories
+
+- Survol/focus de « Catégories » dans la navigation desktop : panneau avec les 13 catégories et leurs 5 premières sous-catégories (lien « Voir tout »).
+- Mobile : « Catégories » se déplie dans le menu.
+- Données via `getMegaMenu()` (client Supabase sans cookies, revalidation 5 min) : le header reste compatible avec les pages statiques, et un menu vide s'affiche en cas d'erreur plutôt que de casser la page.
