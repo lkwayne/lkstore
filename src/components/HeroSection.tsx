@@ -17,11 +17,7 @@ export function HeroSection() {
 
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-24">
         <div className="relative z-10">
-          <span className="inline-flex items-center gap-2 rounded-full bg-brand-surface px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-brand-navy">
-            Livraison à Douala &amp; environs
-          </span>
-
-          <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight text-brand-navy sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-brand-navy sm:text-5xl lg:text-6xl">
             <span className="text-brand-gradient">Achetez mieux, payez moins</span>
             <br />
             et on vous livre, où que vous soyez.
