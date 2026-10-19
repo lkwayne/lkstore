@@ -2,6 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { MAIN_NAV } from "@/config/brand";
 
+const LEGAL_NAV = [
+  { label: "Conditions de vente", href: "/conditions-de-vente" },
+  { label: "Confidentialité", href: "/confidentialite" },
+  { label: "Cookies", href: "/cookies" },
+] as const;
+
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-neutral-100 bg-brand-surface">
@@ -21,6 +27,18 @@ export function Footer() {
         <nav aria-label="Liens du pied de page" className="mt-6">
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-brand-navy">
             {MAIN_NAV.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="hover:text-brand-orange">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-label="Informations légales" className="mt-4">
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-neutral-500">
+            {LEGAL_NAV.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="hover:text-brand-orange">
                   {item.label}
