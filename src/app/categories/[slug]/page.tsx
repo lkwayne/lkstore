@@ -31,7 +31,7 @@ export async function generateMetadata({
   const title = `${category.name} — SENDUU`;
   const description =
     category.description ??
-    `Découvrez tous les produits ${category.name} disponibles sur SENDUU : livraison à Douala, paiement à la livraison ou en magasin.`;
+    `Découvrez tous les produits ${category.name} disponibles sur SENDUU : livraison à domicile, paiement à la livraison ou en magasin.`;
   const path = `/categories/${category.slug}`;
   return {
     title,

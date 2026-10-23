@@ -20,8 +20,7 @@ export function Footer() {
           className="h-8 w-auto"
         />
         <p className="mt-3 max-w-sm text-sm text-neutral-500">
-          Tout ce qu&rsquo;il vous faut, à Douala et bientôt partout au
-          Cameroun.
+          Tout ce qu&rsquo;il vous faut, livré chez vous.
         </p>
 
         <nav aria-label="Liens du pied de page" className="mt-6">

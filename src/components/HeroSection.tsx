@@ -4,7 +4,7 @@ import Image from "next/image";
 const TRUST_POINTS = [
   { label: "Achetez mieux", detail: "Un catalogue pensé pour votre quotidien" },
   { label: "Payez moins", detail: "Paiement à la livraison ou en magasin" },
-  { label: "Nous livrons", detail: "Du panier jusqu'à votre porte, à Douala" },
+  { label: "Nous livrons", detail: "Du panier jusqu'à votre porte" },
 ];
 
 export function HeroSection() {
@@ -20,7 +20,7 @@ export function HeroSection() {
           <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-brand-navy sm:text-5xl lg:text-6xl">
             <span className="text-brand-gradient">Achetez mieux, payez moins</span>
             <br />
-            et on vous livre, où que vous soyez.
+            et on vous livre.
           </h1>
 
           <p className="mt-5 max-w-xl text-base text-neutral-500 sm:text-lg">

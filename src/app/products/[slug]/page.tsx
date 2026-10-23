@@ -23,7 +23,7 @@ function productDescription(product: {
   const raw =
     product.seoDescription ??
     product.description ??
-    `${product.name} disponible sur ${SITE_NAME} à ${formatPrice(product.price)}. Livraison à Douala, paiement à la livraison ou en magasin.`;
+    `${product.name} disponible sur ${SITE_NAME} à ${formatPrice(product.price)}. Livraison à domicile, paiement à la livraison ou en magasin.`;
   const clean = raw.replace(/\s+/g, " ").trim();
   return clean.length > 160 ? `${clean.slice(0, 157)}…` : clean;
 }
