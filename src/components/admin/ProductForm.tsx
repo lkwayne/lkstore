@@ -357,10 +357,9 @@ export function ProductForm({
             <input type="checkbox" {...register("isFlashDeal")} className="h-4 w-4" />
             Flash Deal
           </label>
-          <label className="flex items-center gap-2 text-sm text-neutral-600">
-            <input type="checkbox" {...register("isOnSale")} className="h-4 w-4" />
-            En promotion
-          </label>
+          <p className="text-sm text-neutral-500">
+            « En promotion » est automatique : le produit apparaît dans Promotions dès que vous saisissez un prix promo.
+          </p>
         </div>
       </fieldset>
 
