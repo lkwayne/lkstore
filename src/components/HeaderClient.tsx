@@ -142,7 +142,7 @@ export function HeaderClient({ menu }: { menu: MenuCategory[] }) {
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
           <Link
             href="/account"
-            className="hidden h-10 w-10 items-center justify-center rounded-lg text-brand-navy hover:bg-brand-surface sm:flex"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-navy hover:bg-brand-surface"
             aria-label="Mon compte"
           >
             <UserIcon className="h-5 w-5" />
